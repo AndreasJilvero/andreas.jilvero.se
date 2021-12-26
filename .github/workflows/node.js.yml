@@ -28,4 +28,11 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build --if-present
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.PRIV_SSH_KEY }}
+        known_hosts: '${{ secrets.SSH_KNOWN_HOSTS }}'
+        if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
+
     
