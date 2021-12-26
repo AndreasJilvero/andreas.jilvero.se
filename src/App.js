@@ -10,7 +10,7 @@ const Layout = () => {
       <div className='max-w-screen-md'>
         <header className='bg-white shadow-xl shadow-rose-900 px-8 pt-8 pb-4 border-b border-indigo-500 md:rounded-t-xl text-center'>
           <h1 className='text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-yellow-500'>
-            Andreas Jilvero <span className='hidden md:inline'>(AB)</span>
+            Andreas Jilvero <span className='hidden md:inline'>AB</span>
           </h1>
           <br />
           <img className='border-8 border-indigo-500 rounded-full mx-auto object-cover h-48' src={me} alt="me" />

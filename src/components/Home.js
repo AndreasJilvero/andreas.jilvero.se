@@ -1,3 +1,7 @@
+import github from './../assets/github.svg'
+import linkedin from './../assets/linkedin.svg'
+import mail from './../assets/mail.svg'
+
 export const Home = () => {
   return (
     <>
@@ -13,7 +17,7 @@ export const Home = () => {
         Other than that, I'm experienced with almost anything in the .NET world.
       </p>
       
-      <dl className='grid justify-center py-4 gap-x-4 gap-y-2'>
+      {/*<dl className='grid justify-center py-4 gap-x-4 gap-y-2'>
         {[
           ['Skills', ['.NET', 'Episerver/Optimizely CMS and Commerce', 'Web development']],
           ['Location', ['Stockholm, Sweden']],
@@ -25,7 +29,21 @@ export const Home = () => {
             {values.map(value => (<dd className='col-start-2'>{value}</dd>))}
           </>
         ))}
-      </dl>
+        </dl>*/}
+
+      <ul className='py-4 flex flex-row gap-x-12 justify-center'>
+        {[
+          ['Mail', 'mailto:andreas.jilvero@gmail.com', mail],
+          ['Github', 'https://github.com/AndreasJilvero', github],
+          ['LinkedIn', 'https://www.linkedin.com/in/andreas-jilvero-51b8474a/', linkedin],
+        ].map(([alt, href, icon]) => (
+          <li>
+            <a href={href}>
+              <img src={icon} alt={alt} className='h-12' />
+            </a>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
