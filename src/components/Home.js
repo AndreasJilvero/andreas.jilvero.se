@@ -31,15 +31,15 @@ export const Home = () => {
         ))}
         </dl>*/}
 
-      <ul className='py-4 flex flex-row gap-x-12 justify-center'>
+      <ul className='py-4 flex flex-row gap-x-8 justify-center bg-white'>
         {[
           ['Mail', 'mailto:andreas.jilvero@gmail.com', mail],
           ['Github', 'https://github.com/AndreasJilvero', github],
           ['LinkedIn', 'https://www.linkedin.com/in/andreas-jilvero-51b8474a/', linkedin],
         ].map(([alt, href, icon]) => (
-          <li>
+          <li className='p-2 rounded-md transition ease-in-out hover:bg-green-300 duration-300'>
             <a href={href}>
-              <img src={icon} alt={alt} className='h-12' />
+              <img src={icon} alt={alt} className='h-10' />
             </a>
           </li>
         ))}
