@@ -8,7 +8,7 @@ export const Home = () => {
       <h2 className='text-2xl pb-4'>Hello!</h2>
 
       <p className='pb-3'>
-        My name is Andreas Jilvero and I'm a freelance consultant within Web and .NET. I live in Stockholm, Sweden and enjoy both working on location and remote.
+        My name is Andreas Jilvero and I'm a senior, freelance consultant within Web and .NET. I live in Stockholm, Sweden and enjoy both working on location and remote.
       </p>
 
       <p className='pb-3'>
