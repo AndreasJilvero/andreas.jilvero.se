@@ -1,5 +1,5 @@
 import Link from "next/link";
-import me from './../public/me.png'
+import me from './../assets/me.png'
 import Menu from "./menu";
 
 const Layout = ({ children }) => {
