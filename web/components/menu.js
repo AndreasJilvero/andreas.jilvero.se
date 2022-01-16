@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Blog from "../pages/blog";
 
 const Menu = () => {
   return (
@@ -8,7 +7,7 @@ const Menu = () => {
         <Link href="/">@Me</Link>
       </li>
       <li>
-        <Link href="/blog">My blog posts</Link>
+        <Link href="/blog">My blog</Link>
       </li>
     </ul>
   )

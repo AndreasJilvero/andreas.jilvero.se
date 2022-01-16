@@ -1,4 +1,4 @@
-import client from './../client'
+import client from '../client'
 import Link from 'next/link'
 import BlockContent from '@sanity/block-content-to-react'
 
@@ -21,7 +21,7 @@ const Blog = ({posts}) => {
         {posts && posts.length > 0 && posts.map(({ _id, title = '', slug = '', body }) =>
               slug && (
                 <div key={_id} className='bg-slate-100 p-4'>
-                  <Link href="/post/[slug]" as={`/post/${slug.current}`}>
+                  <Link href="/blog/[slug]" as={`/blog/${slug.current}`}>
                       <a className=''>
                         <h4 className='text-xl pb-2'>{title}</h4>
                         <BlockContent
