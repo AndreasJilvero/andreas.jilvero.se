@@ -1,4 +1,3 @@
-import Link from "next/link";
 import me from './../assets/me.png'
 import Menu from "./menu";
 
