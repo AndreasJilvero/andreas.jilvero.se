@@ -1,5 +1,6 @@
 import Link from "next/link";
 import me from './../public/me.png'
+import Menu from "./menu";
 
 const Layout = ({ children }) => {
   return (
@@ -12,12 +13,8 @@ const Layout = ({ children }) => {
           <br />
           
           <img className='border-8 border-blue-500 rounded-full mx-auto object-cover h-48' src={me.src} alt="Me" />
-
-          <ul className="flex flex-row justify-between gap-x-3">
-            <li>
-              <Link href="/">@Me</Link>
-            </li>
-          </ul>
+          
+          <Menu />
         </header>
 
         <div className='p-8 bg-white shadow-xl shadow-grey-900'>
