@@ -1,15 +1,12 @@
-// tailwind.config.js
 module.exports = {
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  darkMode: false, // or 'media' or 'class'
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     fontFamily: {
-      'sans': ['Inconsolata', 'Arial', 'sans-serif']
+      'sans': ['Source Sans Pro', 'Arial', 'sans-serif']
     },
-    extend: {
-    },
-  },
-  variants: {
     extend: {},
   },
   plugins: [],
