@@ -1,10 +1,17 @@
 import './../styles/globals.css'
 import Layout from '../components/layout'
+import Head from 'next/head'
 
 export default function App({ Component, pageProps, posts }) {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <>
+      <Head>
+        <title>Andreas Jilvero AB</title>
+      </Head>
+
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </>
   )
 }
