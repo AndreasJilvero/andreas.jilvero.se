@@ -1,10 +1,15 @@
 import github from './../assets/github.svg'
 import linkedin from './../assets/linkedin.svg'
 import mail from './../assets/mail.svg'
+import Head from 'next/head'
 
 const Index = () => {
     return (
       <>
+        <Head>
+          <title>Andreas Jilvero AB</title>
+        </Head>
+
         <h2 className='text-2xl pb-4'>Hello!</h2>
 
         <p className='pb-3'>

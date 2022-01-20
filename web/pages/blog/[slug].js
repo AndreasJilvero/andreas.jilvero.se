@@ -1,5 +1,6 @@
 import client from '../../client'
 import BlockContent from '@sanity/block-content-to-react'
+import Head from 'next/head'
 
 const serializers = {
   types: {
@@ -18,15 +19,21 @@ const serializers = {
 
 const Post = ({post}) => {
   return (
-    <article>
-      <h1 className="text-2xl">{post?.title}</h1>
-      <BlockContent
-        blocks={post?.body}
-        imageOptions={{ w: 320, h: 240, fit: 'max' }}
-        {...client.config()}
-        serializers={serializers}
-      />
-    </article>
+    <>
+      <Head>
+        <title>Andreas Jilvero AB - {post?.title}</title>
+      </Head>
+
+      <article>
+        <h1 className="text-2xl">{post?.title}</h1>
+        <BlockContent
+          blocks={post?.body}
+          imageOptions={{ w: 320, h: 240, fit: 'max' }}
+          {...client.config()}
+          serializers={serializers}
+        />
+      </article>
+    </>
   )
 }
 
