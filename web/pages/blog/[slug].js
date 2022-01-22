@@ -10,7 +10,7 @@ const serializers = {
       <></>
     ),
     code: (props) => (
-      <pre className="m-auto bg-slate-900 text-slate-300 text-xs p-4 whitespace-pre-wrap rounded-xl" data-language={props.node.language}>
+      <pre className="m-auto bg-slate-900 text-slate-300 text-xs p-4 rounded-xl overflow-x-auto" data-language={props.node.language}>
         <code>{props.node.code}</code>
       </pre>
     ),
