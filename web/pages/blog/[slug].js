@@ -4,13 +4,23 @@ import Head from 'next/head'
 
 const serializers = {
   types: {
-    block: (props) => props.node.style === "normal" ? (
-      <p className="my-4">{props.children}</p>
-    ) : (
-      <></>
-    ),
+    block: (props) => {
+      if (props.node.style === "normal") {
+        return <p className="mb-4">{props.children}</p>;
+      }
+
+      if (props.node.style === "h3") {
+        return <h3 className="mt-4">{props.children}</h3>;
+      }
+
+      if (props.node.style === "h4") {
+        return <h4 className="mt-4">{props.children}</h4>;
+      }
+
+      return <>{props.node.style}</>;
+    },
     code: (props) => (
-      <pre className="m-auto bg-slate-900 text-slate-300 text-xs p-4 rounded-xl overflow-x-auto" data-language={props.node.language}>
+      <pre className="m-auto bg-slate-900 text-slate-300 text-xs p-4 my-4 rounded-xl overflow-x-auto" data-language={props.node.language}>
         <code>{props.node.code}</code>
       </pre>
     ),
