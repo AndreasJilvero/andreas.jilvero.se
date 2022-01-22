@@ -21,7 +21,7 @@ const Blog = ({posts}) => {
       </Head>
 
       <div>
-        <h2 className='text-2xl pb-4'>My blog</h2>
+        <h2 className='pb-4'>My blog</h2>
 
         <div className='grid grid-cols-1 gap-2'>
           {posts && posts.length > 0 && posts.map(({ _id, title = '', slug = '', body }) =>

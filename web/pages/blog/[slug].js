@@ -10,7 +10,7 @@ const serializers = {
       <></>
     ),
     code: (props) => (
-      <pre className="m-auto bg-slate-200 p-4 w-fit whitespace-pre-wrap" data-language={props.node.language}>
+      <pre className="m-auto bg-slate-900 text-slate-300 text-xs p-4 whitespace-pre-wrap rounded-xl" data-language={props.node.language}>
         <code>{props.node.code}</code>
       </pre>
     ),
@@ -25,7 +25,7 @@ const Post = ({post}) => {
       </Head>
 
       <article>
-        <h1 className="text-2xl">{post?.title}</h1>
+        <h2>{post?.title}</h2>
         <BlockContent
           blocks={post?.body}
           imageOptions={{ w: 320, h: 240, fit: 'max' }}
