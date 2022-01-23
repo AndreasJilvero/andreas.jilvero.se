@@ -35,7 +35,7 @@ const Post = ({post}) => {
       </Head>
 
       <article>
-        <h2>{post?.title}</h2>
+        <h2 className="mb-4">{post?.title}</h2>
         <BlockContent
           blocks={post?.body}
           imageOptions={{ w: 320, h: 240, fit: 'max' }}
