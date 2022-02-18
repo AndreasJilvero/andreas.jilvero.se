@@ -28,7 +28,8 @@ const Layout = ({ children }) => {
               113 25 Stockholm
             </div>
             <div className='md:text-right'>
-              Organisationsnummer: 559237-3004
+              Organisationsnummer: 559237-3004<br />
+              Telefonnummer: 076 035 90 11
             </div>
           </div>
         </div>
