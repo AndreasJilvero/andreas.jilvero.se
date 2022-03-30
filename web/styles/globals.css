@@ -19,6 +19,10 @@
     @apply bg-slate-200;
     @apply rounded;
   }
+  p > a {
+    @apply underline;
+    @apply text-indigo-500;
+  }
 }
 
 @tailwind components;

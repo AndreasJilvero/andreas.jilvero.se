@@ -1,12 +1,15 @@
 import client from '../../client'
 import BlockContent from '@sanity/block-content-to-react'
+import imageUrlBuilder from '@sanity/image-url'
 import Head from 'next/head'
+
+const builder = imageUrlBuilder(client);
 
 const serializers = {
   types: {
     block: (props) => {
       if (props.node.style === "normal") {
-        return <p className="mb-4">{props.children}</p>;
+        return <p className="my-2">{props.children}</p>;
       }
 
       if (props.node.style === "h3") {
@@ -24,6 +27,9 @@ const serializers = {
         <code>{props.node.code}</code>
       </pre>
     ),
+    image: (props) => (
+      <img src={builder.image(props.node).url()} className="mx-auto my-6" />
+    )
   },
 }
 
