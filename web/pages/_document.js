@@ -5,6 +5,7 @@ class AppDocument extends Document {
     return (
       <Html>
         <Head>
+          <script src="https://www.googleoptimize.com/optimize.js?id=OPT-PGQZSKP" async></script>
           <script dangerouslySetInnerHTML={{
             __html: `
               (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
