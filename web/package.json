@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
+    "export": "next export",
     "postbuild": "next-sitemap --config next-sitemap.config.js",
     "start": "next start",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,7 +18,7 @@
     "@sanity/block-content-to-react": "^3.0.0",
     "@sanity/client": "^2.23.2",
     "@sanity/image-url": "^1.0.1",
-    "next": "^12.0.7",
+    "next": "^12.3.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
