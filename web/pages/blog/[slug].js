@@ -77,4 +77,8 @@ export async function getStaticProps(context) {
   }
 }
 
+export const config = {
+  unstable_runtimeJS: false
+}
+
 export default Post;
