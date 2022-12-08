@@ -13,7 +13,7 @@
   h4 {
     @apply text-xl;
   }
-  p > code {
+  p > code, li > code {
     @apply p-1;
     @apply text-sm;
     @apply bg-slate-200;
@@ -22,6 +22,10 @@
   p > a {
     @apply underline;
     @apply text-indigo-500;
+  }
+  ol {
+    list-style-type: decimal;
+    list-style-position: inside;
   }
 }
 
