@@ -1,0 +1,7 @@
+{
+  "buildCommand": "npm run build && npm run export",
+  "devCommand": "next",
+  "outputDirectory": "out",
+  "regions": ["arn1"],
+  "trailingSlash": true
+}
