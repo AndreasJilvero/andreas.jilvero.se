@@ -12,6 +12,10 @@ const serializers = {
         return <p className="my-2">{props.children}</p>;
       }
 
+      if (props.node.style === "h2") {
+        return <h2 className="mt-4">{props.children}</h2>;
+      }
+
       if (props.node.style === "h3") {
         return <h3 className="mt-4">{props.children}</h3>;
       }
@@ -40,7 +44,7 @@ const Post = ({post}) => {
         <title>Andreas Jilvero AB - {post?.title}</title>
       </Head>
 
-      <article>
+      <article className='blogpost'>
         <h2 className="mb-4">{post?.title}</h2>
         <BlockContent
           blocks={post?.body}

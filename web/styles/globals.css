@@ -23,9 +23,15 @@
     @apply underline;
     @apply text-indigo-500;
   }
+  ol, ul {
+    list-style-position: inside !important;
+    margin-left: 1em !important;
+  }
   ol {
     list-style-type: decimal;
-    list-style-position: inside;
+  }
+  .blogpost ul {
+    list-style: circle;
   }
 }
 
