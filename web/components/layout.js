@@ -1,7 +1,10 @@
 import me from './../assets/me.png'
 import Menu from "./menu";
+import { useRouter } from "next/router";
 
 const Layout = ({ children }) => {
+  const router = useRouter();
+
   return (
     <>
       <div className='container min-h-screen min-w-full bg-gray-200 grid justify-center md:py-8'>
@@ -12,7 +15,8 @@ const Layout = ({ children }) => {
             </h1>
             <br />
             
-            <img className='border-8 border-blue-500 rounded-full mx-auto object-cover h-48' src={me.src} alt="Me" />
+            {router.pathname == "/" &&
+              <img className='border-8 border-blue-500 rounded-full mx-auto object-cover h-48' src={me.src} alt="Me" />}
             
             <Menu />
           </header>
