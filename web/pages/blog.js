@@ -24,19 +24,26 @@ const Blog = ({posts}) => {
         <h2 className='pb-4'>My blog</h2>
 
         <div className='grid grid-cols-1 gap-2'>
-          {posts && posts.length > 0 && posts.map(({ _id, title = '', slug = '', body }) =>
+          {posts && posts.length > 0 && posts.map(({ _id, title = '', slug = '', _updatedAt = '', body }) =>
                 slug && (
-                  <div key={_id} className='bg-slate-100 p-4'>
+                  <div key={_id} className='bg-slate-100 p-4' itemScope itemtype="http://schema.org/Article">
                     <Link href="/blog/[slug]" as={`/blog/${slug.current}`}>
                         <a className=''>
-                          <h4 className='text-xl pb-2'>{title}</h4>
+                          <h4 className='text-xl pb-1' itemprop="name">{title}</h4>
                           <BlockContent
                             blocks={body[0]}
                             imageOptions={{ w: 320, h: 240, fit: 'max' }}
                             {...client.config()}
                             serializers={serializers}
                           />
-                          <p className='underline text-indigo-500'>Read more</p>
+                          <div className='flex place-content-between'>
+                            <p className='underline text-indigo-500'>Read more</p>
+                            {_updatedAt && (
+                              <p className='text-sm'>
+                                <time itemprop="datePublished" datetime={new Date(_updatedAt).toLocaleDateString()}>{new Date(_updatedAt).toLocaleDateString()}</time>
+                              </p>
+                            )}
+                          </div>
                         </a>
                     </Link>{' '}
                   </div>

@@ -44,8 +44,13 @@ const Post = ({post}) => {
         <title>Andreas Jilvero AB - {post?.title}</title>
       </Head>
 
-      <article className='blogpost'>
+      <article className='blogpost' itemScope itemtype="http://schema.org/Article">
         <h2 className="mb-4">{post?.title}</h2>
+        {post["_updatedAt"] && (
+          <p className='pb-2 text-sm' data-js={JSON.stringify(post)}>
+            Updated at <time itemprop="datePublished" datetime={new Date(post["_updatedAt"]).toLocaleDateString()}>{new Date(post["_updatedAt"]).toLocaleDateString()}</time>
+          </p>
+        )}
         <BlockContent
           blocks={post?.body}
           imageOptions={{ w: 320, h: 240, fit: 'max' }}
