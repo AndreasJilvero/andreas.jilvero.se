@@ -48,7 +48,7 @@ const Post = ({post}) => {
         <h2 className="mb-4">{post?.title}</h2>
         {post["_updatedAt"] && (
           <p className='pb-2 text-sm' data-js={JSON.stringify(post)}>
-            Updated at <time itemprop="datePublished" datetime={new Date(post["_updatedAt"]).toLocaleDateString()}>{new Date(post["_updatedAt"]).toLocaleDateString()}</time>
+            Updated at <time itemprop="datePublished" datetime={new Date(post["_updatedAt"]).toLocaleDateString("sv-SE")}>{new Date(post["_updatedAt"]).toLocaleDateString("sv-SE")}</time>
           </p>
         )}
         <BlockContent

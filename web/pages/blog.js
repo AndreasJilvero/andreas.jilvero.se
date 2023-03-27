@@ -40,7 +40,7 @@ const Blog = ({posts}) => {
                             <p className='underline text-indigo-500'>Read more</p>
                             {_updatedAt && (
                               <p className='text-sm'>
-                                <time itemprop="datePublished" datetime={new Date(_updatedAt).toLocaleDateString()}>{new Date(_updatedAt).toLocaleDateString()}</time>
+                                <time itemprop="datePublished" datetime={new Date(_updatedAt).toLocaleDateString("sv-SE")}>{new Date(_updatedAt).toLocaleDateString("sv-SE")}</time>
                               </p>
                             )}
                           </div>
