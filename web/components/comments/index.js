@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../subabase'
 import { insertComment, fetchComments } from '../../lib/comments'
