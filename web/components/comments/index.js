@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../subabase'
@@ -13,6 +13,7 @@ const Comments = ({ slug, serverComments, setNumberOfComments }) => {
   const [comment, setComment] = useState("")
 
   const authorizeWithGithub = () => {
+    console.log('Hello :)')
     supabase.auth.signInWithOAuth({provider: 'github', options: {
       redirectTo: location.protocol + '//' + location.host + location.pathname
     }})
