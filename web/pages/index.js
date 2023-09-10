@@ -21,20 +21,6 @@ const Index = () => {
           More often than not, it's been in combination with the Commerce add-on, on some major Swedish e-commerce company.
           Other than that, I'm experienced with almost anything in the .NET world.
         </p>
-        
-        {/*<dl className='grid justify-center py-4 gap-x-4 gap-y-2'>
-          {[
-            ['Skills', ['.NET', 'Episerver/Optimizely CMS and Commerce', 'Web development']],
-            ['Location', ['Stockholm, Sweden']],
-            ['Contact', [<a className='text-blue-500 underline' href="mailto:andreas.jilvero@gmail.com">andreas.jilvero@gmail.com</a>]],
-            ['LinkedIn', [<a className='text-blue-500 underline' href="https://www.linkedin.com/in/andreas-jilvero-51b8474a/">Andreas Jilvero</a>]],
-          ].map(([key, values]) => (
-            <>
-              <dt className='col-start-1 text-right'>{key}</dt>
-              {values.map(value => (<dd className='col-start-2'>{value}</dd>))}
-            </>
-          ))}
-          </dl>*/}
 
         <ul className='py-4 flex flex-row gap-x-8 justify-center bg-white'>
           {[

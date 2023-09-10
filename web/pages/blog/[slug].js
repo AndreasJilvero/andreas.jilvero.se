@@ -1,7 +1,10 @@
-import client from '../../client'
+import Head from 'next/head'
 import BlockContent from '@sanity/block-content-to-react'
 import imageUrlBuilder from '@sanity/image-url'
-import Head from 'next/head'
+import client from '../../client'
+import Comments from '../../components/comments/index'
+import { useState } from 'react'
+import { fetchComments } from '../../lib/comments'
 
 const builder = imageUrlBuilder(client);
 
@@ -37,7 +40,9 @@ const serializers = {
   },
 }
 
-const Post = ({post}) => {
+const Post = ({post, comments}) => {
+  const [numberOfComments, setNumberOfComments] = useState(comments.length)
+
   return (
     <>
       <Head>
@@ -46,11 +51,14 @@ const Post = ({post}) => {
 
       <article className='blogpost' itemScope itemtype="http://schema.org/Article">
         <h2 className="mb-4">{post?.title}</h2>
-        {post["_updatedAt"] && (
-          <p className='pb-2 text-sm' data-js={JSON.stringify(post)}>
-            Updated at <time itemprop="datePublished" datetime={new Date(post["_updatedAt"]).toLocaleDateString("sv-SE")}>{new Date(post["_updatedAt"]).toLocaleDateString("sv-SE")}</time>
-          </p>
-        )}
+        <div className='flex justify-between text-sm pb-2'>
+          {post["_updatedAt"] && (
+            <p data-js={JSON.stringify(post)}>
+              Updated at <time itemprop="datePublished" datetime={new Date(post["_updatedAt"]).toLocaleDateString("sv-SE")}>{new Date(post["_updatedAt"]).toLocaleDateString("sv-SE")}</time>
+            </p>
+          )}
+          <a href="#comments" className='underline'>{numberOfComments} comment(s)</a>
+        </div>
         <BlockContent
           blocks={post?.body}
           imageOptions={{ w: 320, h: 240, fit: 'max' }}
@@ -58,6 +66,13 @@ const Post = ({post}) => {
           serializers={serializers}
         />
       </article>
+      <div className='mt-6'>
+        <Comments 
+          slug={post.slug.current} 
+          serverComments={comments}
+          setNumberOfComments={setNumberOfComments} 
+        />
+      </div>
     </>
   )
 }
@@ -79,9 +94,12 @@ export async function getStaticProps(context) {
   const post = await client.fetch(`
     *[_type == "post" && slug.current == $slug][0]
   `, { slug })
+
+  const { data: comments } = await fetchComments(slug)
+
   return {
     props: {
-      post
+      post, comments
     }
   }
 }

@@ -1,6 +1,9 @@
 @tailwind base;
 
 @layer base {
+  a {
+    @apply cursor-pointer;
+  }
   h1 {
     @apply text-4xl;
   }
@@ -20,7 +23,6 @@
     @apply rounded;
   }
   p > a {
-    @apply underline;
     @apply text-indigo-500;
   }
   ol, ul {
