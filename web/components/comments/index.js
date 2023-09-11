@@ -13,7 +13,6 @@ const Comments = ({ slug, serverComments, setNumberOfComments }) => {
   const [comment, setComment] = useState("")
 
   const authorizeWithGithub = () => {
-    console.log('Hello :)')
     supabase.auth.signInWithOAuth({provider: 'github', options: {
       redirectTo: location.protocol + '//' + location.host + location.pathname
     }})
@@ -43,13 +42,18 @@ const Comments = ({ slug, serverComments, setNumberOfComments }) => {
   }
 
   useEffect(() => {
-    const observer = new IntersectionObserver(() => {
-      setIsIntersecting(true);
+    const observer = new IntersectionObserver((entries) => {
+      if (entries && entries.length > 0 && entries[0].isIntersecting) {
+        setIsIntersecting(true);
+      }
     });
 
-    observer.observe(ref.current);
+    if (ref?.current) {
+      observer.observe(ref.current);
+    }
+    
     return () => observer.disconnect();
-  }, [])
+  }, [ref])
 
   useEffect(() => {
     if (!isIntersecting) {
