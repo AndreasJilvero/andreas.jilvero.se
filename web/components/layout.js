@@ -1,6 +1,6 @@
 import me from './../assets/me.png'
-import Menu from "./menu";
-import { useRouter } from "next/router";
+import Menu from "./menu"
+import { useRouter } from "next/router"
 
 const Layout = ({ children }) => {
   const router = useRouter();

@@ -5,6 +5,10 @@ class AppDocument extends Document {
     return (
       <Html>
         <Head>
+          <script dangerouslySetInnerHTML={{
+            __html: `window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };`
+          }}></script>
+          <script src="/_vercel/insights/script.js" defer></script>
           <script src={`https://www.googleoptimize.com/optimize.js?id=${process.env.NEXT_PUBLIC_OPTIMIZE}`} async></script>
           <script dangerouslySetInnerHTML={{
             __html: `
