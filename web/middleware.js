@@ -1,10 +1,10 @@
-import { NextResponse, NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 
 export async function middleware(req, ev) {
-  const reqUrl = new URL(req.url)
-
-  if (reqUrl.pathname == "/blog/") {
-    return NextResponse.redirect(reqUrl.protocol + "//" + reqUrl.host + "/")
+  if (req.nextUrl.pathname == "/blog/") {
+    const url = req.nextUrl.clone()
+    url.pathname = '/'
+    return NextResponse.redirect(url)
   }
 
   return NextResponse.next()
