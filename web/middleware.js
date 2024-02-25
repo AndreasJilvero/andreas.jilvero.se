@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server'
 
 export async function middleware(req, ev) {
-  if (req.nextUrl.pathname == "/blog/") {
-    const url = req.nextUrl.clone()
-    url.pathname = '/'
-    return NextResponse.redirect(url)
+  try {
+    if (req.nextUrl.pathname == "/blog/") {
+      const url = req.nextUrl.clone()
+      url.pathname = '/'
+      return NextResponse.redirect(url)
+    }
+  
+    return NextResponse.next()
   }
-
-  return NextResponse.next()
+  catch {
+    
+  }
 }
