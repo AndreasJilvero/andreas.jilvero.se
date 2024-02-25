@@ -1,4 +1,4 @@
-const Blog = ({posts}) => {
+const Blog = () => {
   return (
     <></>
   )
