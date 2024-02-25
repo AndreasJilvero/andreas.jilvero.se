@@ -17,12 +17,12 @@ export default {
         maxLength: 96,
       },
     },
-    /*{
+    {
       name: 'author',
       title: 'Author',
       type: 'reference',
       to: {type: 'author'},
-    },
+    },/*
     {
       name: 'mainImage',
       title: 'Main image',
@@ -41,6 +41,11 @@ export default {
       name: 'publishedAt',
       title: 'Published at',
       type: 'datetime',
+    },
+    {
+      name: 'summary',
+      title: 'Summary',
+      type: 'text',
     },
     {
       name: 'body',

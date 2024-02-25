@@ -22,8 +22,9 @@
     @apply bg-slate-200;
     @apply rounded;
   }
-  p > a {
+  a:not(.reset-a) {
     @apply text-indigo-500;
+    @apply underline;
   }
   ol, ul {
     list-style-position: inside !important;

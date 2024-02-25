@@ -24,6 +24,7 @@ class AppDocument extends Document {
 
           <meta name="title" content="Andreas Jilvero AB" />
           <meta name="description" content="Senior, freelance IT consultant specialized within .NET and Episerver Commerce (now Optimizely) located in Stockholm, Sweden" />
+          <meta name="keywords" content="optimizely, episerver, yarp, filebeat, fluentvalidation, partytown, caching, web vitals, web performance" />
 
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://andreas.jilvero.se/" />

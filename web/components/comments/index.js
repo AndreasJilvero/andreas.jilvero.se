@@ -101,7 +101,7 @@ const Comments = ({ slug, serverComments, setNumberOfComments }) => {
               <div className='flex gap-1 text-sm'>
                 <p>Authorized with Github</p>
                 <a 
-                  className='underline'
+                  className='reset-a underline'
                   onClick={signOut}
                 >
                   [Sign out]
@@ -111,7 +111,7 @@ const Comments = ({ slug, serverComments, setNumberOfComments }) => {
           </div>
         )}
         {!loggedIn && (
-          <a onClick={authorizeWithGithub} className="text-sm underline">Authorize with Github to post anonymously</a>
+          <a onClick={authorizeWithGithub} className="reset-a text-sm underline">Authorize with Github to post anonymously</a>
         )}
       </div>
     </div>

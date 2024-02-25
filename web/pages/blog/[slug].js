@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import BlockContent from '@sanity/block-content-to-react'
+import Link from 'next/link'
 import imageUrlBuilder from '@sanity/image-url'
 import client from '../../client'
 import Comments from '../../components/comments/index'
@@ -49,15 +50,20 @@ const Post = ({post, comments}) => {
         <title>Andreas Jilvero AB - {post?.title}</title>
       </Head>
 
+      <div className="pb-8">
+        <Link href="/">
+          ‹ Back to blog list
+        </Link>
+      </div>
       <article className='blogpost' itemScope itemtype="http://schema.org/Article">
-        <h2 className="mb-4">{post?.title}</h2>
+        <h1 className="mb-4">{post?.title}</h1>
         <div className='flex justify-between text-sm pb-2'>
           {post["_updatedAt"] && (
             <p data-js={JSON.stringify(post)}>
               Updated at <time itemprop="datePublished" datetime={new Date(post["_updatedAt"]).toLocaleDateString("sv-SE")}>{new Date(post["_updatedAt"]).toLocaleDateString("sv-SE")}</time>
             </p>
           )}
-          <a href="#comments" className='underline'>{numberOfComments} comment(s)</a>
+          <a href="#comments" className='reset-a underline'>{numberOfComments} comment(s)</a>
         </div>
         <BlockContent
           blocks={post?.body}
