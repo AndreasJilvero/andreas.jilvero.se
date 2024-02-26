@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build && npm run export",
+  "buildCommand": "npm run build",
   "devCommand": "next",
   "outputDirectory": "out",
   "regions": ["arn1"],
