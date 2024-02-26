@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
 
   return (
     <div className="md:pl-16 bg-gray-100">
-      <div className="bg-white p-8 md:px-16 md:w-[1000px] w-full">
+      <div className="bg-white p-8 md:px-16 md:w-[1000px] w-full min-h-screen">
         <div>
           {children}
         </div>
