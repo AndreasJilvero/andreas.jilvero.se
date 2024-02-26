@@ -4,4 +4,13 @@ const Blog = () => {
   )
 }
 
-export default Blog;
+export async function getServerSideProps(context) {
+  return {
+    redirect: {
+      destination: '/',
+      permanent: false,
+    },
+  }
+}
+
+export default Blog
