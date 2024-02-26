@@ -1,16 +1,7 @@
-const Blog = () => {
-  return (
-    <></>
-  )
-}
+const Blog = () => <></>
 
-export async function getServerSideProps(context) {
-  return {
-    redirect: {
-      destination: '/',
-      permanent: false,
-    },
-  }
+export const config = {
+  unstable_runtimeJS: false
 }
 
 export default Blog

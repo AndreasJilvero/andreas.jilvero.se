@@ -30,8 +30,7 @@ const Index = ({posts}) => {
             && posts.map(({ _id, title = '', slug = '', _updatedAt = '', summary }) =>
               slug && (
                 <div key={_id} className='md:border-l-8 md:pl-8' itemScope itemtype="http://schema.org/Article">
-                  <Link href="/blog/[slug]" as={`/blog/${slug.current}`}>
-                      <a className='reset-a'>
+                  <Link href="/blog/[slug]" as={`/blog/${slug.current}`} className="reset-a">
                         <h4 className='text-xl pb-2' itemprop="name">{title}</h4>
                         <p className="pb-4">{summary}</p>
                         <div className='flex place-content-between'>
@@ -42,7 +41,6 @@ const Index = ({posts}) => {
                             </p>
                           )}
                         </div>
-                      </a>
                   </Link>
                 </div>
               )

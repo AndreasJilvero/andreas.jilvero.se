@@ -3,5 +3,8 @@
   "devCommand": "next",
   "outputDirectory": "out",
   "regions": ["arn1"],
-  "trailingSlash": true
+  "trailingSlash": true,
+  "redirects": [
+    { "source": "/blog/", "destination": "/", "permanent": false }
+  ]
 }
