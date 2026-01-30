@@ -1,0 +1,40 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Comments from '../../components/Comments';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts.map((post) => ({
+		params: { slug: post.slug },
+		props: post,
+	}));
+}
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const { Content } = await post.render();
+---
+
+<Layout title={`Andreas Jilvero AB - ${post.data.title}`} description={post.data.summary}>
+    <div class="pb-8">
+        <a href="/">
+          ‹ Back to blog list
+        </a>
+    </div>
+    <article class='blogpost' itemScope itemType="http://schema.org/Article">
+        <h1 class="mb-4">{post.data.title}</h1>
+        <div class='flex justify-between text-sm pb-2'>
+            <p>
+                Updated at <time itemProp="datePublished" dateTime={post.data.date.toISOString().split('T')[0]}>{post.data.date.toLocaleDateString("sv-SE")}</time>
+            </p>
+            <a href="#comments" class='reset-a underline'>Comments</a>
+        </div>
+        <div class="markdown-content">
+            <Content />
+        </div>
+    </article>
+    <div class='mt-6'>
+        <Comments client:visible slug={post.slug} />
+    </div>
+</Layout>

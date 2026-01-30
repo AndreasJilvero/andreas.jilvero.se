@@ -1,0 +1,74 @@
+---
+import '../styles/globals.css';
+import github from '../assets/github.svg';
+import linkedin from '../assets/linkedin.svg';
+import mail from '../assets/mail.svg';
+
+interface Props {
+	title: string;
+    description?: string;
+}
+
+const { title, description = "Senior, freelance IT consultant specialized within .NET and Episerver Commerce (now Optimizely) located in Stockholm, Sweden" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet" />
+
+        <meta name="title" content={title} />
+        <meta name="description" content={description} />
+        <meta name="keywords" content="optimizely, episerver, yarp, filebeat, fluentvalidation, partytown, caching, web vitals, web performance" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={Astro.url} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+
+        <meta property="twitter:url" content={Astro.url} />
+        <meta property="twitter:title" content={title} />
+        <meta property="twitter:description" content={description} />
+	</head>
+	<body class="md:pl-16 bg-gray-100">
+		<div class="bg-white p-8 md:px-16 md:w-[1000px] w-full min-h-screen mx-auto md:mx-0">
+            <div>
+                <slot />
+            </div>
+
+            <footer class='mt-8 pt-8 grid justify-between grid-cols-1 md:grid-cols-2 gap-3 md:gap-0 border-t'>
+                <div class=''>
+                    Andreas Jilvero AB<br />
+                    Västmannagatan 44<br />
+                    113 25 Stockholm
+                </div>
+                <div class='md:text-right'>
+                    Organisationsnummer: 559237-3004<br />
+                    Phone number: 076 035 90 11
+                </div>
+            </footer>
+            <ul class='ml-0 py-4 flex flex-row gap-x-8 justify-center bg-white'>
+                <li class='p-2 rounded-md transition ease-in-out hover:bg-green-300 duration-300'>
+                    <a href="mailto:andreas.jilvero@gmail.com">
+                        <img src={mail.src} alt="Mail" class="h-10" />
+                    </a>
+                </li>
+                <li class='p-2 rounded-md transition ease-in-out hover:bg-green-300 duration-300'>
+                    <a href="https://github.com/AndreasJilvero">
+                        <img src={github.src} alt="Github" class="h-10" />
+                    </a>
+                </li>
+                <li class='p-2 rounded-md transition ease-in-out hover:bg-green-300 duration-300'>
+                    <a href="https://www.linkedin.com/in/andreas-jilvero-51b8474a/">
+                        <img src={linkedin.src} alt="LinkedIn" class="h-10" />
+                    </a>
+                </li>
+            </ul>
+        </div>
+	</body>
+</html>
