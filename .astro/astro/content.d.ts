@@ -211,6 +211,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".md"] };
+"is-asyncblockcomponent-safe-in-optimizely-cms-12.md": {
+	id: "is-asyncblockcomponent-safe-in-optimizely-cms-12.md";
+  slug: "is-asyncblockcomponent-safe-in-optimizely-cms-12";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
 "my-favourite-git-command.md": {
 	id: "my-favourite-git-command.md";
   slug: "my-favourite-git-command";
