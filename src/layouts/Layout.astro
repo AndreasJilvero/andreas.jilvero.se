@@ -10,12 +10,27 @@ interface Props {
 }
 
 const { title, description = "Senior, freelance IT consultant specialized within .NET and Episerver Commerce (now Optimizely) located in Stockholm, Sweden" } = Astro.props;
+
+const NEXT_PUBLIC_OPTIMIZE = process.env.NEXT_PUBLIC_OPTIMIZE;
+const NEXT_PUBLIC_GTM = process.env.NEXT_PUBLIC_GTM;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
+        {NEXT_PUBLIC_OPTIMIZE && (
+            <script is:inline src={`https://www.googleoptimize.com/optimize.js?id=${NEXT_PUBLIC_OPTIMIZE}`}></script>
+        )}
+        {NEXT_PUBLIC_GTM && (
+            <script is:inline define:vars={{ NEXT_PUBLIC_GTM }}>
+                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                })(window,document,'script','dataLayer', NEXT_PUBLIC_GTM);
+            </script>
+        )}
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
@@ -34,8 +49,17 @@ const { title, description = "Senior, freelance IT consultant specialized within
         <meta property="twitter:url" content={Astro.url} />
         <meta property="twitter:title" content={title} />
         <meta property="twitter:description" content={description} />
+
+        <script is:inline>
+            window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+        </script>
+        <script defer src="/_vercel/insights/script.js"></script>
 	</head>
 	<body class="md:pl-16 bg-gray-100">
+        {NEXT_PUBLIC_GTM && (
+            <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${NEXT_PUBLIC_GTM}`}
+            height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        )}
 		<div class="bg-white p-8 md:px-16 md:w-[1000px] w-full min-h-screen mx-auto md:mx-0">
             <div>
                 <slot />
