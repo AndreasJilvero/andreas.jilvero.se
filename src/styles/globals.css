@@ -1,0 +1,73 @@
+@tailwind base;
+
+@layer base {
+  a {
+    @apply cursor-pointer;
+  }
+  h1 {
+    @apply text-4xl font-bold;
+  }
+  h2 {
+    @apply text-3xl font-bold mt-8 mb-4;
+  }
+  h3 {
+    @apply text-2xl font-bold mt-6 mb-3;
+  }
+  h4 {
+    @apply text-xl font-bold mt-4 mb-2;
+  }
+
+  /* Inline code */
+  :not(pre) > code {
+    @apply p-1;
+    @apply text-sm;
+    @apply bg-slate-200;
+    @apply rounded;
+    @apply font-mono;
+  }
+
+  /* Links */
+  a:not(.reset-a) {
+    @apply text-indigo-500;
+    @apply underline;
+  }
+  a:not(.reset-a):hover {
+    @apply text-indigo-700;
+  }
+
+  /* Lists */
+  .blogpost ul, .blogpost ol {
+    @apply my-4 ml-6;
+  }
+  .blogpost ul {
+    @apply list-disc;
+  }
+  .blogpost ol {
+    @apply list-decimal;
+  }
+  .blogpost li {
+    @apply mb-2;
+  }
+
+  /* Paragraphs in blogpost */
+  .blogpost p {
+    @apply my-4 leading-relaxed;
+  }
+
+  /* Images */
+  .blogpost img {
+    @apply mx-auto my-8 rounded-lg shadow-md;
+  }
+
+  /* Code blocks */
+  .blogpost pre {
+    @apply bg-slate-900 text-slate-300 text-sm p-4 my-6 rounded-xl overflow-x-auto shadow-lg;
+    @apply font-mono;
+  }
+  .blogpost pre code {
+    @apply bg-transparent p-0 rounded-none text-inherit;
+  }
+}
+
+@tailwind components;
+@tailwind utilities;

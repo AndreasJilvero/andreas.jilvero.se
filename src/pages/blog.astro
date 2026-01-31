@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<Layout title="Andreas Jilvero AB - IT consultant">
+    <h1 class="pb-8">Andreas Jilvero AB</h1>
+
+    <p class='text-xl pb-4'>Hello!</p>
+
+    <p class='pb-2'>
+        My name is Andreas Jilvero and I'm a senior, freelance consultant within Web and .NET. I live in Stockholm, Sweden and enjoy both working on location and remote.
+    </p>
+
+    <p class='pb-8'>
+        I've been in the business for nearly 11 years, and the majority of that time has been focused on the platform Episerver (now Optimizely).
+        More often than not, it's been in combination with the Commerce add-on, on some major Swedish e-commerce company.
+        Other than that, I'm experienced with almost anything in the .NET world.
+    </p>
+
+    <h2 class="pb-8">My blog</h2>
+
+    <div class='grid grid-cols-1 gap-8'>
+        {posts.map((post) => (
+            <div class='md:border-l-8 md:pl-8' itemScope itemType="http://schema.org/Article">
+                <a href={`/blog/${post.slug}/`} class="reset-a">
+                    <h4 class='text-xl pb-2' itemProp="name">{post.data.title}</h4>
+                    <p class="pb-4">{post.data.summary}</p>
+                    <div class='flex place-content-between'>
+                        <p class='underline text-indigo-500'>Read more</p>
+                        <p class='text-sm'>
+                            <time itemProp="datePublished" dateTime={post.data.date.toISOString().split('T')[0]}>
+                                {post.data.date.toLocaleDateString("sv-SE")}
+                            </time>
+                        </p>
+                    </div>
+                </a>
+            </div>
+        ))}
+    </div>
+</Layout>
