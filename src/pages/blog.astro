@@ -27,7 +27,7 @@ const posts = (await getCollection('blog')).sort(
     <div class='grid grid-cols-1 gap-8'>
         {posts.map((post) => (
             <div class='md:border-l-8 md:pl-8' itemScope itemType="http://schema.org/Article">
-                <a href={`/blog/${post.slug}`} class="reset-a">
+                <a href={`/blog/${post.slug}/`} class="reset-a">
                     <h4 class='text-xl pb-2' itemProp="name">{post.data.title}</h4>
                     <p class="pb-4">{post.data.summary}</p>
                     <div class='flex place-content-between'>
