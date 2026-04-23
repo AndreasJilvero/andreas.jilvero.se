@@ -2,6 +2,7 @@
 title: "How to pause traffic using YARP reverse proxy"
 date: 2023-04-24T11:37:00.000Z
 summary: "Discover the process of configuring YARP as a reverse proxy, enabling the capability to temporarily pause and resume traffic directed towards the destination."
+keywords: "YARP, reverse proxy, .NET, ASP.NET Core, traffic management, pause traffic, load balancing, C#"
 ---
 
 YARP is a .NET Core reverse proxy that you typically use as a layer on top of a web application. This blog post will demonstrate how YARP can pause traffic while there's downtime for the underlying web application - for example, while doing a deploy.

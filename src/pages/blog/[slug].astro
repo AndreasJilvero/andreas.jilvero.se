@@ -13,22 +13,63 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content } = await post.render();
+
+const siteURL = 'https://andreas.jilvero.se';
+const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": siteURL
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": post.data.title,
+            "item": `${siteURL}/blog/${post.slug}/`
+        }
+    ]
+};
+
+const displayDate = post.data.updatedDate ?? post.data.date;
 ---
 
-<Layout title={`${post.data.title} - Andreas Jilvero AB`} description={post.data.summary}>
-    <div class="pb-8">
-        <a href="/">
-          ‹ Back to blog list
-        </a>
-    </div>
-    <article class='blogpost' itemScope itemType="http://schema.org/Article">
-        <h1 class="mb-4">{post.data.title}</h1>
+<Layout
+    title={`${post.data.title} - Andreas Jilvero AB`}
+    description={post.data.summary}
+    type="article"
+    publishedDate={post.data.date}
+    updatedDate={post.data.updatedDate}
+    keywords={post.data.keywords}
+>
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+    <nav aria-label="Breadcrumb" class="pb-8 text-sm">
+        <ol class="flex gap-2">
+            <li><a href="/">Home</a></li>
+            <li aria-hidden="true">›</li>
+            <li aria-current="page">{post.data.title}</li>
+        </ol>
+    </nav>
+    <article class='blogpost' itemScope itemType="http://schema.org/BlogPosting">
+        <h1 class="mb-4" itemProp="headline">{post.data.title}</h1>
         <div class='flex justify-between text-sm pb-2'>
             <p>
-                Updated at <time itemProp="datePublished" dateTime={post.data.date.toISOString().split('T')[0]}>{post.data.date.toLocaleDateString("sv-SE")}</time>
+                {post.data.updatedDate ? 'Updated' : 'Published'} <time
+                    itemProp={post.data.updatedDate ? 'dateModified' : 'datePublished'}
+                    dateTime={displayDate.toISOString().split('T')[0]}
+                >{displayDate.toLocaleDateString("sv-SE")}</time>
+                {post.data.updatedDate && (
+                    <meta itemProp="datePublished" content={post.data.date.toISOString().split('T')[0]} />
+                )}
+            </p>
+            <p itemProp="author" itemScope itemType="http://schema.org/Person">
+                <span itemProp="name">Andreas Jilvero</span>
             </p>
         </div>
-        <div class="markdown-content">
+        <div class="markdown-content" itemProp="articleBody">
             <Content />
         </div>
     </article>

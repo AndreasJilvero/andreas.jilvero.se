@@ -2,6 +2,7 @@
 title: "Is AsyncBlockComponent safe to use in Optimizely CMS 12?"
 date: 2026-01-31T13:43:14Z
 summary: "Exploring why AsyncBlockComponent might not be the true async solution you were looking for in Optimizely CMS 12."
+keywords: "AsyncBlockComponent, Optimizely CMS 12, async, deadlock, content area rendering, Episerver, .NET"
 ---
 
 With later versions of Optimizely CMS 12, developers were introduced to an abstraction called `AsyncBlockComponent`. According to the documentation, it "Provides the base implementation for asynchronous block components."

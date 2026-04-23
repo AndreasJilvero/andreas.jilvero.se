@@ -2,6 +2,7 @@
 title: "Using master keys to control Episerver cache"
 date: 2023-04-13T11:37:00.000Z
 summary: "Learn an simple and efficient way to make use of Episervers abstractions for caching and cache invalidation"
+keywords: "Episerver cache, Optimizely cache, master keys, cache invalidation, ISynchronizedObjectInstanceCache, .NET caching"
 ---
 
 The art of implementing a good caching solution is to determine when to invalidate it. In theory, the more you finetune invalidation - the better your performance will be. In other terms, more work equals better performance. However, code always comes at a cost - *the best code is the code that does not exist*. Thankfully, there is a sweet spot where you don't need to put in too much effort in order to get great performance gains.

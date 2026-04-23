@@ -2,6 +2,7 @@
 title: "How to correlate IIS request log with application log"
 date: 2024-02-03T12:37:00.000Z
 summary: "Learn how to share a correlation ID between IIS server logs and structured Serilog logs"
+keywords: "IIS request log, correlation ID, Serilog, structured logging, distributed tracing, .NET, ASP.NET"
 ---
 
 A [correlation ID](https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html) (or request ID) is a token that uniquely identifies a HTTP request. In application logs, we can use it to figure out what events occured within the scope of a request. However, other than application logs - we also have web server request logs, and it would be meaningful to correlate the web server log with the application log. This post will provide a solution for this scenario.

@@ -2,87 +2,79 @@
 title: "How to configure Filebeat, Logstash and Kibana for parsed logging"
 date: 2024-02-04T12:37:00.000Z
 summary: "Learn how to read IIS server logs and structured Serilog logs using Filebeat, and ship them via Logstash to Elasticsearch"
+keywords: "Filebeat, Logstash, Kibana, Elasticsearch, ELK stack, IIS logs, Serilog, structured logging, .NET logging"
 ---
 
-### Intro
-
-I was trying to set up logging in a setup that included Filebeat, Logstash and Kibana on top of Elasticsearch. The logging was made up of both application logs via Serilog and IIS request logs. I couldn't find any good documentation for this scenario, so this post will attempt to summarize the process.
+Setting up the ELK stack (Elasticsearch, Logstash, Kibana) with Filebeat for a .NET application that produces both IIS access logs and structured Serilog application logs is not well-documented. Most guides cover one or the other, not both together. This post summarises what it takes to get both log sources flowing into Elasticsearch, correctly parsed, and visible in Kibana.
 
 ### Prerequisites
 
-The context of this blog post is that the application logs are [structured](https://www.structlog.org/en/stable/why.html) via JSON and that the IIS server logs use the format W3C.
+The setup assumes:
 
-Also, make sure you have the following applications. I recommend that you select the ZIP downloads - not the MSI versions - if it's your personal computer.
+- Application logs are structured JSON written by Serilog.
+- IIS server logs use the W3C format (the default).
+- You are running on Windows and want to test locally before deploying.
 
-[Filebeat](https://www.elastic.co/downloads/beats/filebeat)
+Download the ZIP versions of each tool — not the MSI installers — so you can run multiple versions side by side without polluting your system:
 
-[Logstash](https://www.elastic.co/downloads/logstash)
+- [Filebeat](https://www.elastic.co/downloads/beats/filebeat)
+- [Logstash](https://www.elastic.co/downloads/logstash)
+- [Elasticsearch](https://www.elastic.co/downloads/elasticsearch)
+- [Kibana](https://www.elastic.co/downloads/kibana)
 
-[Elasticsearch](https://www.elastic.co/downloads/elasticsearch)
+### Step 1 - Start Elasticsearch with security disabled
 
-[Kibana](https://www.elastic.co/downloads/kibana)
-
-### Step 1 - Elasticsearch
-
-Start Elasticsearch by running:
+Elasticsearch 8.x enables security (HTTPS + authentication) by default. For local development, disable it to keep things simple:
 
 ```
 C:\Temp\elasticsearch-8.12.0> .\bin\elasticsearch.bat -E xpack.security.enabled=false
 ```
 
-This will start Elasticsearch running on [http://localhost:9200/](http://localhost:9200/). In Elasticsearch 8.0 and later, security is enabled automatically which translates to both HTTPS and authentication. This command disables those features.
+Elasticsearch will be available at `http://localhost:9200`. You should see a JSON response with cluster details when you open that URL in a browser.
 
-### Step 2 - Kibana
-
-Start Kibana by running:
+### Step 2 - Start Kibana and note existing state
 
 ```
 C:\Temp\kibana-8.12.0> .\bin\kibana.bat
 ```
 
-By default, Kibana will connect to Elasticsearch on [http://localhost:9200/](http://localhost:9200/) and serve it's UI on [http://localhost:5601/](http://localhost:5601/). You should be able to access both endpoints in the browser.
+Kibana connects to Elasticsearch on `http://localhost:9200` by default and serves its UI on `http://localhost:5601`. Before going further, open the Kibana UI and note the current state of [indexes](http://localhost:5601/app/management/data/index_management/indices) and [ingest pipelines](http://localhost:5601/app/management/ingest/ingest_pipelines/). You will want to compare this after Logstash and Filebeat are running to confirm that data is flowing correctly.
 
-Take note of [existing indexes](http://localhost:5601/app/management/data/index_management/indices) and [ingest pipelines](http://localhost:5601/app/management/ingest/ingest_pipelines/), as they will change after we've started Logstash and Filebeat.
+### Step 3 - Start Logstash with the sample configuration
 
-### Step 3 - Logstash
-
-Start Logstash by running:
+Logstash ships with a sample config that listens for Beats input on port 5044 and forwards to Elasticsearch:
 
 ```
 C:\Temp\logstash-8.12.0> .\bin\logstash.bat -f .\config\logstash-sample.conf
 ```
 
-This will spin up a Logstash instance listening for data on port 5044 and sending data to Elasticsearch on [http://localhost:9200](http://localhost:9200), as configured in `logstash-sample.conf`. Also, an index template called [ecs-logstash](http://localhost:5601/app/management/data/index_management/templates/ecs-logstash) will be created.
+This creates an index template called `ecs-logstash` in Elasticsearch. Logstash is now ready to receive data from Filebeat.
 
-### Step 4 - Filebeat
+### Step 4 - Configure Filebeat for both IIS and application logs
 
-This section is inspired by [this example using Kafka instead of Logstash](https://www.elastic.co/guide/en/logstash/current/use-filebeat-modules-kafka.html).
+Filebeat needs to be set up to read two distinct log sources and forward both to Logstash.
 
-First we need to setup filebeat using the following command:
+**Initial setup** — run once to install Kibana dashboards:
 
 ```
 C:\Temp\filebeat-8.12.0-windows-x86_64> .\filebeat.exe -e setup
 ```
 
-I think this step adds dashboards in Kibana. The `-e` flag adds verbose output to console.
-
-Next step is to enable the module IIS:
+**Enable the IIS module** — this renames `modules.d\iis.yml.disabled` to `modules.d\iis.yml`:
 
 ```
 C:\Temp\filebeat-8.12.0-windows-x86_64> .\filebeat.exe modules enable iis
 ```
 
-The only thing this does - I think - is that it removes the suffix `.disabled` for the file `modules.d\iis.yml.disabled`.
-
-Then, set up pipelines in Elasticsearch using command:
+**Set up Elasticsearch ingest pipelines for IIS parsing:**
 
 ```
 C:\Temp\filebeat-8.12.0-windows-x86_64> .\filebeat.exe -e setup --pipelines --modules iis -M "iis.access.enabled=true"
 ```
 
-But, what we wanted was to send data through Logstash. Therefore, we need to follow [this guide](https://www.elastic.co/guide/en/logstash/current/use-ingest-pipelines.html).
+This creates the `filebeat-8.12.0-iis-access-pipeline` ingest pipeline in Elasticsearch, which knows how to parse W3C-formatted IIS log lines.
 
-Open `filebeat.yml` and comment out the Elasticsearch output and enable Logstash instead.
+**Switch Filebeat output from Elasticsearch to Logstash.** Open `filebeat.yml` and make this change:
 
 ```yaml
 #output.elasticsearch:
@@ -91,7 +83,7 @@ output.logstash:
   hosts: ["localhost:5044"]
 ```
 
-In the same file, we should also enable `filestream` input. Make sure the following settings are set accordingly:
+**Configure the filestream input** for your Serilog application logs. In the same `filebeat.yml`:
 
 ```yaml
 - type: filestream
@@ -100,7 +92,7 @@ In the same file, we should also enable `filestream` input. Make sure the follow
     - C:\Develop\YourProject.Website\App_Data\*.log
 ```
 
-Last step is to also modify `modules.d\iis.yml`. Make sure the following settings has been set accordingly:
+**Configure the IIS module** to point at your IIS log directory. Open `modules.d\iis.yml`:
 
 ```yaml
 - module: iis
@@ -110,17 +102,16 @@ Last step is to also modify `modules.d\iis.yml`. Make sure the following setting
     - C:\inetpub\logs\LogFiles\W3SVC2\*.log
 ```
 
-So, if we would start filebeat now, we would have two providers of logs - filestream input and IIS logs. We need a way treat these files differently, therefore we need to configure Logstash once more.
+### Step 5 - Route the two log sources to their correct pipelines
 
-### Step 5 - Back to Logstash
+With both the filestream input and the IIS module active, Filebeat is now sending two distinct types of log data to Logstash. You need Logstash to route them to the right ingest pipelines for correct parsing.
 
-If we once again check the [ingest pipelines](http://localhost:5601/app/management/ingest/ingest_pipelines), we can now see that we have more pipelines. The interesting ones are:
+Check the [ingest pipelines](http://localhost:5601/app/management/ingest/ingest_pipelines/) in Kibana — you should now see:
 
-filebeat-8.12.0-iis-access-pipeline
+- `filebeat-8.12.0-iis-access-pipeline` — for parsing W3C IIS logs
+- `logs@json-pipeline` — for parsing structured JSON logs
 
-logs@json-pipeline
-
-In order to direct the different logs to these two pipelines, we need to modify `config\logstash-sample.conf`.
+Update `config\logstash-sample.conf` to route based on whether a pipeline is specified in the Beats metadata:
 
 ```yaml
 input {
@@ -150,11 +141,14 @@ output {
     }
   }
 }
-
 ```
 
-This will direct the logs to the two different ingest pipelines. You might need to change the GROK pattern used in the IIS pipeline. In order to debug your IIS logs with the GROK patterns, you can use the [Grok Debugger](http://localhost:5601/app/dev_tools#/grokdebugger), provided by Kibana.
+IIS logs — which have a known pipeline attached by the module — are routed to the IIS ingest pipeline. Application logs — which have no pipeline metadata — fall through to `logs@json-pipeline`, which parses the JSON fields from Serilog.
 
-You should now be able to see your logs in the [Discover](http://localhost:5601/app/discover#/) view, and once you got those GROK patterns going, you should be able to create out-of-the-box IIS dashboards.
+### Verifying and debugging
 
-I should mention that [this guide](https://www.digitalocean.com/community/tutorials/how-to-install-elasticsearch-logstash-and-kibana-elastic-stack-on-ubuntu-22-04) describes the process well as well.
+Once everything is running, open the [Discover](http://localhost:5601/app/discover#/) view in Kibana and look for incoming log entries. If IIS logs are not parsing correctly, use the [Grok Debugger](http://localhost:5601/app/dev_tools#/grokdebugger) in Kibana to test your GROK pattern against a sample log line. The IIS W3C format is standard, but the exact field order can vary between IIS versions and configurations.
+
+With correct GROK patterns in place you will also get access to out-of-the-box IIS dashboards in Kibana that give you request volume, error rates, and top URLs at a glance.
+
+For a broader introduction to the ELK stack setup, the [DigitalOcean tutorial on installing the Elastic Stack on Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-elasticsearch-logstash-and-kibana-elastic-stack-on-ubuntu-22-04) covers the concepts well even if you are on Windows.

@@ -2,6 +2,7 @@
 title: "How to use CacheTagHelper with content areas in Optimizely"
 date: 2022-11-30T21:51:21.173Z
 summary: "Improve performance in Optimizely CMS by effectively using the CacheTagHelper with Content Areas."
+keywords: "CacheTagHelper, Optimizely, Episerver, content areas, output caching, ASP.NET Core, performance"
 ---
 
 #### Update (2022-12-31)

@@ -2,6 +2,7 @@
 title: "A practical guide to improve your core web vitals"
 date: 2022-04-09T18:15:00.000Z
 summary: "Embark on the journey of optimizing the performance of a multi-page web application and learn about the low-hanging fruits that you can adapt"
+keywords: "core web vitals, web performance, LCP, CLS, FID, page speed optimization, .NET web application"
 ---
 
 It goes without saying, having a fast website will improve the customer experience. All your KPIs will be better with a fast website. Okay, enough of motivation - let's get practical.

@@ -7,13 +7,74 @@ import mail from '../assets/mail.svg';
 interface Props {
 	title: string;
     description?: string;
+    image?: string;
+    type?: 'website' | 'article';
+    publishedDate?: Date;
+    updatedDate?: Date;
+    keywords?: string;
 }
 
-const { title, description = "Senior, freelance IT consultant specialized within .NET and Episerver Commerce (now Optimizely) located in Stockholm, Sweden" } = Astro.props;
+const {
+    title,
+    description = "Senior, freelance IT consultant specialized within .NET and Episerver Commerce (now Optimizely) located in Stockholm, Sweden",
+    image,
+    type = 'website',
+    publishedDate,
+    updatedDate,
+    keywords = "optimizely, episerver, yarp, filebeat, fluentvalidation, partytown, caching, web vitals, web performance"
+} = Astro.props;
 
 const PUBLIC_OPTIMIZE = import.meta.env.PUBLIC_OPTIMIZE;
 const PUBLIC_GTM = import.meta.env.PUBLIC_GTM;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const siteURL = 'https://andreas.jilvero.se';
+const defaultImage = `${siteURL}/og-default.png`;
+const ogImage = image ? (image.startsWith('http') ? image : `${siteURL}${image}`) : defaultImage;
+
+const jsonLdBase = {
+    "@context": "https://schema.org",
+    "@type": type === 'article' ? "BlogPosting" : "WebSite",
+    "url": canonicalURL.toString(),
+    "name": title,
+    "description": description,
+};
+
+const jsonLdArticle = type === 'article' ? {
+    ...jsonLdBase,
+    "headline": title,
+    "image": ogImage,
+    "datePublished": publishedDate?.toISOString(),
+    "dateModified": (updatedDate ?? publishedDate)?.toISOString(),
+    "author": {
+        "@type": "Person",
+        "name": "Andreas Jilvero",
+        "url": siteURL,
+        "sameAs": [
+            "https://www.linkedin.com/in/andreas-jilvero-51b8474a/",
+            "https://github.com/AndreasJilvero"
+        ]
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "Andreas Jilvero AB",
+        "url": siteURL
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": canonicalURL.toString()
+    }
+} : {
+    ...jsonLdBase,
+    "author": {
+        "@type": "Person",
+        "name": "Andreas Jilvero",
+        "url": siteURL,
+        "sameAs": [
+            "https://www.linkedin.com/in/andreas-jilvero-51b8474a/",
+            "https://github.com/AndreasJilvero"
+        ]
+    }
+};
 ---
 
 <!doctype html>
@@ -42,16 +103,34 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
         <meta name="title" content={title} />
         <meta name="description" content={description} />
-        <meta name="keywords" content="optimizely, episerver, yarp, filebeat, fluentvalidation, partytown, caching, web vitals, web performance" />
+        <meta name="keywords" content={keywords} />
 
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content={type === 'article' ? 'article' : 'website'} />
         <meta property="og:url" content={Astro.url} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:site_name" content="Andreas Jilvero AB" />
+        {type === 'article' && publishedDate && (
+            <meta property="article:published_time" content={publishedDate.toISOString()} />
+        )}
+        {type === 'article' && (updatedDate ?? publishedDate) && (
+            <meta property="article:modified_time" content={(updatedDate ?? publishedDate)!.toISOString()} />
+        )}
+        {type === 'article' && (
+            <meta property="article:author" content="Andreas Jilvero" />
+        )}
 
-        <meta property="twitter:url" content={Astro.url} />
-        <meta property="twitter:title" content={title} />
-        <meta property="twitter:description" content={description} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={Astro.url} />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
 
         <script is:inline>
             window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };

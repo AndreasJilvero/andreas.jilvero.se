@@ -2,62 +2,47 @@
 title: "Trying to implement Partytown in .NET Core application - HTML integration"
 date: 2022-12-31T13:23:11.123Z
 summary: "Take part in the painful path of trying to use Partytown in a multi page application"
+keywords: "Partytown, .NET Core, web workers, third-party scripts, performance, ASP.NET MVC, JavaScript offloading"
 ---
 
-This will be a post that's updated as I learn to implement [Partytown](https://partytown.builder.io/), which honestly doesn't seem straightforward - at all.
+This post documents my attempt to implement [Partytown](https://partytown.builder.io/) on a .NET Core 6 web application — not a React app, just plain HTML, JS, and CSS built with Webpack. It is an honest account of what worked, what did not, and why I ultimately decided not to ship it.
 
-## Prelude
+## Why Partytown?
 
-I've been [deep diving into web performance](https://andreas.jilvero.se/blog/a-guide-to-improve-your-core-web-vitals/) during the last year and tried to implement my findings on my current customer, with good results. The last (?) major issue is third party scripts. The comprehensive list are as follows.
+After a year of [deep diving into web performance](/blog/a-guide-to-improve-your-core-web-vitals/), the last major performance issue on my client's site was third-party scripts. The full list:
 
-Google Tag Manager
+- Google Tag Manager
+- Google Optimize
+- Facebook/Meta Pixel
+- TikTok Pixel
+- Pinterest
+- Hotjar
 
-Google Optimize
+These scripts are loaded synchronously on every page and are the single largest contributor to poor Total Blocking Time (TBT) and Largest Contentful Paint (LCP). Removing them is not an option — they are business-critical. The only alternative is to move them off the main thread, which is exactly what Partytown promises.
 
-Facebook/Meta Pixel
+Partytown runs third-party scripts inside a web worker, communicating with the main thread via a synchronous-looking API backed by `SharedArrayBuffer` and `Atomics`. In theory, the main thread stays unblocked and performance metrics improve significantly.
 
-TikTok Pixel
+Here are the metrics before attempting Partytown:
 
-Pinterest
+![Lighthouse metrics before Partytown](../../assets/images/aa1341e0a05f9cbfbc5cfbae6385993092c85828-533x145.png)
 
-Hotjar
+![WebPageTest waterfall before Partytown](../../assets/images/debd6dae0be1205fade4cd752b31d939d4c0ca59-706x480.png)
 
-These scripts are currently the largest performance villain on the web application. To improve performance, the only options are to either remove the scripts - which will not happen - or to try Partytown.
-
-My understanding of Partytown is that it somehow runs third party scripts separate from the main thread, and that this method should offload the web application in a way that performance metrics are (greatly) improved.
-
-I will therefore try to implement Partytown on the web application of my current customer. It so happens that this web app does not use any frontend framework like React, Vue or Solid. It's a .NET Core 6 web application with HTML, JS and CSS - no fuzz. It's thus clear that I should follow the [HTML guide](https://partytown.builder.io/html). I use Webpack as a bundler.
-
-These are the metrics before using Partytown.
-
-
-
-![](../../assets/images/aa1341e0a05f9cbfbc5cfbae6385993092c85828-533x145.png)
-
-
-
-![](../../assets/images/debd6dae0be1205fade4cd752b31d939d4c0ca59-706x480.png)
-
-
-
-![](../../assets/images/8fe22cbe5030c422d43dbbb4b3cea6e14a1ae2ca-719x100.png)
+![Third-party script blocking time](../../assets/images/8fe22cbe5030c422d43dbbb4b3cea6e14a1ae2ca-719x100.png)
 
 ## Part 1 - The snippet
 
-Once you've installed the NPM library, it seems we should inline configuration and a snippet in the `<head>` section. Partytown has a [Webpack utility script](https://partytown.builder.io/copy-library-files#webpack) that's used to include the Partytown files in your build folder, and thus also include references to the files in the manifest file - if you have one.
-
-I created a file for the Partytown configuration `partytownConfig.js`.
+Install the NPM package and configure Webpack to copy the Partytown library files into your build output. I created a dedicated entry point for the Partytown config:
 
 ```javascript
+// partytownConfig.js
 window.partytown = {
   lib: `${__PUBLIC_PATH__}js/~partytown/`,
   forward: ['ttq.track', 'ttq.page', 'ttq.load', 'dataLayer.push', 'fbq']
 }
 ```
 
-`__PUBLIC_PATH__` is set to my build folder path in [DefinePlugin](https://webpack.js.org/plugins/define-plugin/).
-
-I include `partytownConfig.js` in Webpack as its own entry point.
+`__PUBLIC_PATH__` is injected via Webpack's `DefinePlugin`. The entry point is configured with `runtime: false` so it can be safely inlined into the HTML `<head>` without a Webpack runtime context:
 
 ```javascript
 'partytownConfig': {
@@ -66,9 +51,7 @@ I include `partytownConfig.js` in Webpack as its own entry point.
 },
 ```
 
-`runtime: false` sets this entry point to not depend on the Webpack runtime. This is handy if you want to inline a script directly in your DOM (where you might not yet have a Webpack context).
-
-The following is added to the `<head>` tag - probably as high as possible. `@WebAssets.GetContent("...")` is a function that (1) reads the manifest and (2) fetches the content of a file.
+In the Razor layout, inline both the config and the Partytown snippet as high as possible in `<head>`:
 
 ```html
 <script>
@@ -79,55 +62,34 @@ The following is added to the `<head>` tag - probably as high as possible. `@Web
 </script>
 ```
 
-In essence, these are the steps [the docs](https://partytown.builder.io/html) mention - so let's try it! I'm wrapping all 3rd party initialization scripts in `text/partytown` script types. These scripts are generally just a short stub that lazy loads larger scripts.
+Then change all third-party script tags from `type="text/javascript"` to `type="text/partytown"`.
 
 ### Results
 
-Regarding Partytown, the following is loaded according to Devtools Network tab.
+Partytown loaded and started proxying requests:
 
+![Partytown network requests in DevTools](../../assets/images/5379bbd0f93ffc7d8634017d8d7363b5e68e6f25-1443x162.png)
 
+313 requests went through Partytown's proxy. However, most third-party scripts failed to load:
 
-![](../../assets/images/5379bbd0f93ffc7d8634017d8d7363b5e68e6f25-1443x162.png)
+| Script | Status |
+|---|---|
+| Google Tag Manager | ✅ |
+| Google Analytics | ❌ |
+| Google Optimize | ✅ |
+| Facebook Pixel | ❌ |
+| TikTok Pixel | ❌ |
+| Pinterest | ❌ |
+| Hotjar | ❌ |
+| Imbox | ❌ (incompatible) |
 
-There are in total 313 requests to proxytown.
+The common failure mode was CORS. When Partytown's web worker tries to fetch a third-party script, the request comes from a worker origin — not the page origin — and most CDNs block it.
 
-I also get this warning, but I have no clue what it's about.
-
-![](../../assets/images/e42e1118c4a1acd461322cecbaf495b8184edde5-437x142.png)
-
-However, looking at the 3rd party scripts, only a few scripts successfully loads.
-
-Google Tag Manager ✅
-
-Google Analytics ❌
-
-Imbox ❌ (script seems incompatible with Partytown)
-
-Google Optimize ✅
-
-Facebook Pixel ❌
-
-TikTok Pixel ❌
-
-Pinterest ❌
-
-Hotjar ❌
-
-The common issue (except Imbox) for the failed scripts is CORS:
-
-![](../../assets/images/2e08d25ee0884b3c27f28e1d6af497b9d3ee2462-1759x45.png)
-
-### Confusion
-
-At this point, I have only added `text/partytown` to the initializing script. For Facebook, this means I've only wrapped the snippet mentioned [here](https://developers.facebook.com/docs/meta-pixel/get-started) but **not** any subsequent use of `fbq.track(...)`. It would be reasonable to only wrap the initialization snippets, because it's a this point the main thread would be most congested.
-
-Out of the 3rd party scripts mentioned in this blog post, only Facebook Pixel requires a reverse proxy [according to Partytown](https://partytown.builder.io/common-services). However, according to the tests - only Google Tag Manager and Google Optimize seems to work without a reverse proxy, due to CORS issues.
-
-I'm not sure if there's another solution to the CORS issues other than a reverse proxy.
+![CORS error in DevTools console](../../assets/images/2e08d25ee0884b3c27f28e1d6af497b9d3ee2462-1759x45.png)
 
 ## Part 2 - The reverse proxy
 
-In order to not run into CORS issues, it seems Partytown suggest to use a reverse proxy on your own domain. In .NET Core you can use [YARP](https://microsoft.github.io/reverse-proxy/articles/direct-forwarding.html) to simply forward requests to a remote endpoint.
+Partytown's documented solution to CORS is to route third-party requests through a reverse proxy on your own domain. In .NET Core, YARP's direct forwarding makes this straightforward:
 
 ```csharp
 public static IEndpointRouteBuilder MapForwarder(this IEndpointRouteBuilder builder, IApplicationBuilder app)
@@ -143,7 +105,7 @@ public static IEndpointRouteBuilder MapForwarder(this IEndpointRouteBuilder buil
         ActivityHeadersPropagator = new ReverseProxyPropagator(DistributedContextPropagator.Current)
     });
 
-    var transformer = new CustomTransformer(); //HttpTransformer.Default;
+    var transformer = new CustomTransformer();
     var requestConfig = new ForwarderRequestConfig { ActivityTimeout = TimeSpan.FromSeconds(100) };
 
     builder.Map("/reverse-proxy/", async (ctx) =>
@@ -152,11 +114,9 @@ public static IEndpointRouteBuilder MapForwarder(this IEndpointRouteBuilder buil
         {
             var error = await forwarder.SendAsync(ctx, url, httpClient, requestConfig, transformer);
 
-            // Check if the operation was successful
             if (error != ForwarderError.None)
             {
                 var errorFeature = ctx.GetForwarderErrorFeature();
-
                 var exception = errorFeature.Exception;
             }
         }
@@ -170,35 +130,31 @@ private class CustomTransformer : HttpTransformer
     public override async ValueTask TransformRequestAsync(HttpContext httpContext,
         HttpRequestMessage proxyRequest, string destinationPrefix)
     {
-        // Copy all request headers
         await base.TransformRequestAsync(httpContext, proxyRequest, destinationPrefix);
-
         proxyRequest.RequestUri = new Uri(destinationPrefix);
-
-        // Suppress the original request header, use the one from the destination Uri.
         proxyRequest.Headers.Host = null;
     }
 }
 ```
 
-Now adjust `Startup.cs` accordingly.
+Register the forwarder and map the endpoint in `Startup.cs`:
 
 ```csharp
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services.AddHttpForwarder();
-    }
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddHttpForwarder();
+}
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    app.UseEndpoints(endpoints =>
     {
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapForwarder(app);
-        });
-    }
+        endpoints.MapForwarder(app);
+    });
+}
 ```
 
-Last step is to add the reverse proxy to the Partytown config.
+Then tell Partytown to route external script requests through it:
 
 ```javascript
 window.partytown = {
@@ -220,42 +176,43 @@ window.partytown = {
 }
 ```
 
-Let's try to run the application again.
+### Results with the reverse proxy
 
-### Results
+| Script | Status |
+|---|---|
+| Google Tag Manager | ✅ |
+| Google Analytics | ✅ |
+| Google Optimize | ✅ |
+| Facebook Pixel | ✅ |
+| TikTok Pixel | ✅ |
+| Pinterest | ❌ |
+| Hotjar | ❌ |
+| Imbox | ❌ (incompatible) |
 
-Let's begin with checking if scripts can be loaded through the reverse proxy.
+Most scripts now loaded. Pinterest and Hotjar continued to fail — a [known issue in the Partytown repo](https://github.com/BuilderIO/partytown/issues/241#issuecomment-1348620360) with no resolution at the time of writing.
 
-Google Tag Manager ✅
+The performance metrics improved, though less dramatically than hoped:
 
-Google Analytics ✅
+![Lighthouse metrics after Partytown with reverse proxy](../../assets/images/03a2a987315c9797219f0843232e0a1edd7579c1-506x148.png)
 
-Imbox ❌ (still fails for same reason as above)
+## Why I did not ship it
 
-Google Optimize ✅
+After getting most scripts loading, I stopped short of deploying to production. Here is why.
 
-Facebook Pixel ✅
+**Hotjar and Pinterest would be silently broken.** These are business-tracked pixels. Deploying a change that silently drops two tracking scripts without a plan to fix them is not a viable option.
 
-TikTok Pixel ✅
+**The reverse proxy is a security and privacy concern.** Routing all third-party traffic through your own domain means your server is making arbitrary outbound HTTP requests based on query string parameters. This needs rate limiting, an allowlist, and careful review — none of which were trivial to add quickly.
 
-Pinterest ❌
+**Partytown is poorly maintained.** Looking at the [GitHub issue tracker](https://github.com/BuilderIO/partytown/issues), there are many open issues with long waits for responses. The project has not seen active development for a significant period. Betting production performance on an unmaintained library adds long-term risk.
 
-Hotjar ❌
+**The gains were smaller than expected.** Even with most scripts working through the reverse proxy, the Lighthouse improvement was modest. The scripts were moved off the main thread in theory, but the overhead of the worker communication and the proxy round-trips offset some of the benefit.
 
-Now only Pinterest fails to load. Looking at metrics, they are improved but maybe not as much as I expected.
+### What I would recommend instead
 
-![](../../assets/images/03a2a987315c9797219f0843232e0a1edd7579c1-506x148.png)
+For most sites, the better options are:
 
-### Confusion
+- **Defer non-critical scripts** — move analytics and pixels to `defer` or load them after the `load` event. Simpler, well-supported, and predictable.
+- **Use a tag manager firing rule** — configure GTM to delay firing pixels until after user interaction or a time delay.
+- **Audit and remove unused scripts** — in my experience, at least one or two tracking scripts on most sites are either duplicated or abandoned.
 
-There seems to be a reverse proxy provided by the authorers of Partytown - [https://cdn.builder.io/api/v1/proxy-api](https://cdn.builder.io/api/v1/proxy-api). I'm not sure if this can be used as a reverse proxy.
-
-Not sure if we can use the reverse proxy for all 3rd party scripts.
-
-Why doesn't Pinterest or Hotjar work? Seems I'm not the only one to [experience this issue](https://github.com/BuilderIO/partytown/issues/241#issuecomment-1348620360).
-
-## Part 3 - Atomics
-
-To be written.
-
-Or not. I think I've just about given up on Partytown. There's a lot of fuzz about it but looking at how [little attention it gets from its creators on Github](https://github.com/BuilderIO/partytown/issues), I think there's too little energy being spent on it. I totally understand that they have better stuff to do, but documentation and help is just too sparse.
+Partytown is a genuinely interesting idea and it may mature into a reliable tool. As of late 2022, it was not ready for a production site with a diverse set of third-party scripts.
