@@ -1,7 +1,7 @@
 ---
 title: "My favourite git command"
 date: 2022-01-13T22:11:00.000Z
-summary: ""
+summary: "A quick tip on how to recover changes from a branch created off the wrong base using a simple git checkout command."
 ---
 
 From time to time, it so happens that I create a feature branch based on the wrong branch (for example, `master` vs `develop`).

@@ -1,7 +1,7 @@
 ---
 title: "How to show up on Google with SSG Next.js web application"
 date: 2022-12-08T14:43:00.000Z
-summary: ""
+summary: "Reflecting on the challenges and solutions for getting a Next.js static site indexed by Google."
 ---
 
 This web application is statically generated SPA, built using Next.js. For some reason, my blog posts would not show up on Google, even though using a sitemap generator and adding that sitemap to Google Search Console.

@@ -1,7 +1,7 @@
 ---
 title: "Combining enums and Visitor pattern"
 date: 2022-01-16T15:46:00.000Z
-summary: ""
+summary: "Explore a clean architectural pattern by combining C# Enums with the Visitor Pattern to avoid messy switch statements."
 ---
 
 I often find myself in situations where I need specific logic based on some state, for example the value of an `enum`. The `enum` type enables us to define a limited selection of constants in a key value fashion.

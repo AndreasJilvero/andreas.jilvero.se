@@ -11,29 +11,32 @@ interface Props {
 
 const { title, description = "Senior, freelance IT consultant specialized within .NET and Episerver Commerce (now Optimizely) located in Stockholm, Sweden" } = Astro.props;
 
-const NEXT_PUBLIC_OPTIMIZE = process.env.NEXT_PUBLIC_OPTIMIZE;
-const NEXT_PUBLIC_GTM = process.env.NEXT_PUBLIC_GTM;
+const PUBLIC_OPTIMIZE = import.meta.env.PUBLIC_OPTIMIZE;
+const PUBLIC_GTM = import.meta.env.PUBLIC_GTM;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-        {NEXT_PUBLIC_OPTIMIZE && (
-            <script is:inline src={`https://www.googleoptimize.com/optimize.js?id=${NEXT_PUBLIC_OPTIMIZE}`}></script>
+        {PUBLIC_OPTIMIZE && (
+            <script is:inline src={`https://www.googleoptimize.com/optimize.js?id=${PUBLIC_OPTIMIZE}`}></script>
         )}
-        {NEXT_PUBLIC_GTM && (
-            <script is:inline define:vars={{ NEXT_PUBLIC_GTM }}>
+        {PUBLIC_GTM && (
+            <script is:inline define:vars={{ PUBLIC_GTM }}>
                 (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
                 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
                 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-                })(window,document,'script','dataLayer', NEXT_PUBLIC_GTM);
+                })(window,document,'script','dataLayer', PUBLIC_GTM);
             </script>
         )}
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+
+        <link rel="canonical" href={canonicalURL} />
 
         <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet" />
 
@@ -56,8 +59,8 @@ const NEXT_PUBLIC_GTM = process.env.NEXT_PUBLIC_GTM;
         <script defer src="/_vercel/insights/script.js"></script>
 	</head>
 	<body class="md:pl-16 bg-gray-100">
-        {NEXT_PUBLIC_GTM && (
-            <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${NEXT_PUBLIC_GTM}`}
+        {PUBLIC_GTM && (
+            <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${PUBLIC_GTM}`}
             height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         )}
 		<div class="bg-white p-8 md:px-16 md:w-[1000px] w-full min-h-screen mx-auto md:mx-0">

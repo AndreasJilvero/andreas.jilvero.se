@@ -1,18 +1,18 @@
 ---
 title: "Core web vitals - Prelude"
 date: 2022-03-30T22:21:34.933Z
-summary: ""
+summary: "Join the journey of improving web performance on a large e-commerce site, moving from massive bundles to optimized Core Web Vitals."
 ---
 
 I have a sidetrack backlog on my current client where I look over the web performance of the website. It's a major e-commerce website that sells the products in Europe, US and Russia. When I started working with the client nearly a year ago, there wasn't much talk about web perf at all. However, things were in dire straits - we had a combined bundle of 1.4 mega bytes - way over the ~250 kB that Webpack recommends. Upon this, the site is also heavy on large images (not included in the asset size below).
 
-![](../../assets/images/87bdb6a79feeb2c8d8215a3441fb4f50d48c1dd5-390x117.png)
+![Graph showing combined asset size of 1.4 MiB](../../assets/images/87bdb6a79feeb2c8d8215a3441fb4f50d48c1dd5-390x117.png)
 
 My main focus has always been the "normal" backlog, so I've tried to squeeze in web perf work whenever I had time. I've probably spent at least 4-8 hours a week for the past 6 months, and a lot of that time has mostly been spent on research and testing things.
 
 Today we're sitting at a combined bundle of less than 500 kB. I regret to say that I don't have any Lighthouse metrics from the start, but today they're roughly at around 50.
 
-![](../../assets/images/06b114fdb8c13ec1c514924c16196a2f8f5aaee5-410x147.png)
+![Lighthouse performance score of 50](../../assets/images/06b114fdb8c13ec1c514924c16196a2f8f5aaee5-410x147.png)
 
 I'm not even close to being finished (if you even ever get to reach the finish line). However, I've really learnt a lot about web perf and there are many things that I thought would satisfy Lighthouse, but in the end didn't.
 
