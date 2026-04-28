@@ -110,21 +110,17 @@ The appsettings.json can look like this:
 
 Now, let's imagine the following deployment sequence:
 
-Deployment package is downloaded and unzipped to a target folder
-
-Physical path of the IIS web site is changed to the new folder
+1. Deployment package is downloaded and unzipped to a target folder
+2. Physical path of the IIS web site is changed to the new folder
 
 This generally means that IIS responds with 503 due to the changed physical path for a short period of time.
 
 So, the web site is down and any requests are lost. A reverse proxy on top could provide a way to take care of those requests while the web site is down. That would require us to change the deployment sequence slightly:
 
-Deployment package is downloaded and unzipped to a target folder
-
-Pause traffic in the reverse proxy
-
-Physical path of the IIS web site is changed to the new folder
-
-When the web site is up and running, resume traffic
+1. Deployment package is downloaded and unzipped to a target folder
+2. Pause traffic in the reverse proxy
+3. Physical path of the IIS web site is changed to the new folder
+4. When the web site is up and running, resume traffic
 
 In order to pause traffic in YARP we need to make use of the following middleware.
 

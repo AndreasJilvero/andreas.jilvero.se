@@ -28,8 +28,7 @@ const PUBLIC_OPTIMIZE = import.meta.env.PUBLIC_OPTIMIZE;
 const PUBLIC_GTM = import.meta.env.PUBLIC_GTM;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const siteURL = 'https://andreas.jilvero.se';
-const defaultImage = `${siteURL}/og-default.png`;
-const ogImage = image ? (image.startsWith('http') ? image : `${siteURL}${image}`) : defaultImage;
+const ogImage = image ? (image.startsWith('http') ? image : `${siteURL}${image}`) : undefined;
 
 const jsonLdBase = {
     "@context": "https://schema.org",
@@ -42,7 +41,7 @@ const jsonLdBase = {
 const jsonLdArticle = type === 'article' ? {
     ...jsonLdBase,
     "headline": title,
-    "image": ogImage,
+    ...(ogImage ? { "image": ogImage } : {}),
     "datePublished": publishedDate?.toISOString(),
     "dateModified": (updatedDate ?? publishedDate)?.toISOString(),
     "author": {
@@ -109,9 +108,9 @@ const jsonLdArticle = type === 'article' ? {
         <meta property="og:url" content={Astro.url} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
-        <meta property="og:image" content={ogImage} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
+        {ogImage && <meta property="og:image" content={ogImage} />}
+        {ogImage && <meta property="og:image:width" content="1200" />}
+        {ogImage && <meta property="og:image:height" content="630" />}
         <meta property="og:locale" content="en_US" />
         <meta property="og:site_name" content="Andreas Jilvero AB" />
         {type === 'article' && publishedDate && (
@@ -124,11 +123,11 @@ const jsonLdArticle = type === 'article' ? {
             <meta property="article:author" content="Andreas Jilvero" />
         )}
 
-        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
         <meta name="twitter:url" content={Astro.url} />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={ogImage} />
+        {ogImage && <meta name="twitter:image" content={ogImage} />}
 
         <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
 
