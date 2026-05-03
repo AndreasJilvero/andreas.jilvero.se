@@ -14,7 +14,8 @@ type Props = CollectionEntry<'blog'>;
 const post = Astro.props;
 const { Content } = await post.render();
 
-const siteURL = 'https://andreas.jilvero.se';
+const anonymous = import.meta.env.PUBLIC_ANONYMOUS === 'true';
+const siteURL = import.meta.env.PUBLIC_SITE_URL ?? 'https://andreas.jilvero.se';
 const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -38,7 +39,7 @@ const displayDate = post.data.updatedDate ?? post.data.date;
 ---
 
 <Layout
-    title={`${post.data.title} - Andreas Jilvero AB`}
+    title={anonymous ? post.data.title : `${post.data.title} - Andreas Jilvero AB`}
     description={post.data.summary}
     type="article"
     publishedDate={post.data.date}
@@ -65,9 +66,11 @@ const displayDate = post.data.updatedDate ?? post.data.date;
                     <meta itemProp="datePublished" content={post.data.date.toISOString().split('T')[0]} />
                 )}
             </p>
-            <p itemProp="author" itemScope itemType="http://schema.org/Person">
-                <span itemProp="name">Andreas Jilvero</span>
-            </p>
+            {!anonymous && (
+                <p itemProp="author" itemScope itemType="http://schema.org/Person">
+                    <span itemProp="name">Andreas Jilvero</span>
+                </p>
+            )}
         </div>
         <div class="markdown-content" itemProp="articleBody">
             <Content />

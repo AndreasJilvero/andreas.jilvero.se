@@ -5,24 +5,26 @@ import Layout from '../layouts/Layout.astro';
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
+const anonymous = import.meta.env.PUBLIC_ANONYMOUS === 'true';
 ---
 
-<Layout title="Andreas Jilvero AB - IT consultant">
-    <h1 class="pb-8">Andreas Jilvero AB</h1>
+<Layout title={anonymous ? "Blog" : "Andreas Jilvero AB - IT consultant"}>
+    {!anonymous && (
+        <>
+            <h1 class="pb-8">Andreas Jilvero AB</h1>
+            <p class='text-xl pb-4'>Hello!</p>
+            <p class='pb-2'>
+                My name is Andreas Jilvero and I'm a senior, freelance consultant within Web and .NET. I live in Stockholm, Sweden and enjoy both working on location and remote.
+            </p>
+            <p class='pb-8'>
+                I've been in the business for nearly 11 years, and the majority of that time has been focused on the platform Episerver (now Optimizely).
+                More often than not, it's been in combination with the Commerce add-on, on some major Swedish e-commerce company.
+                Other than that, I'm experienced with almost anything in the .NET world.
+            </p>
+        </>
+    )}
 
-    <p class='text-xl pb-4'>Hello!</p>
-
-    <p class='pb-2'>
-        My name is Andreas Jilvero and I'm a senior, freelance consultant within Web and .NET. I live in Stockholm, Sweden and enjoy both working on location and remote.
-    </p>
-
-    <p class='pb-8'>
-        I've been in the business for nearly 11 years, and the majority of that time has been focused on the platform Episerver (now Optimizely).
-        More often than not, it's been in combination with the Commerce add-on, on some major Swedish e-commerce company.
-        Other than that, I'm experienced with almost anything in the .NET world.
-    </p>
-
-    <h2 class="pb-8">My blog</h2>
+    <h2 class="pb-8">{anonymous ? 'Posts' : 'My blog'}</h2>
 
     <div class='grid grid-cols-1 gap-8'>
         {posts.map((post) => (

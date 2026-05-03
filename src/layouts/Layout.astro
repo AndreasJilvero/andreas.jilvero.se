@@ -26,8 +26,9 @@ const {
 
 const PUBLIC_OPTIMIZE = import.meta.env.PUBLIC_OPTIMIZE;
 const PUBLIC_GTM = import.meta.env.PUBLIC_GTM;
+const anonymous = import.meta.env.PUBLIC_ANONYMOUS === 'true';
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const siteURL = 'https://andreas.jilvero.se';
+const siteURL = import.meta.env.PUBLIC_SITE_URL ?? 'https://andreas.jilvero.se';
 const ogImage = image ? (image.startsWith('http') ? image : `${siteURL}${image}`) : undefined;
 
 const jsonLdBase = {
@@ -146,32 +147,36 @@ const jsonLdArticle = type === 'article' ? {
                 <slot />
             </div>
 
-            <footer class='mt-8 pt-8 grid justify-between grid-cols-1 md:grid-cols-2 gap-3 md:gap-0 border-t'>
-                <div class=''>
-                    Andreas Jilvero AB<br />
-                </div>
-                <div class='md:text-right'>
-                    Organisationsnummer: 559237-3004<br />
-                    Phone number: 076 035 90 11
-                </div>
-            </footer>
-            <ul class='ml-0 py-4 flex flex-row gap-x-8 justify-center bg-white'>
-                <li class='p-2 rounded-md transition ease-in-out hover:bg-green-300 duration-300'>
-                    <a href="mailto:andreas.jilvero@gmail.com">
-                        <img src={mail.src} alt="Mail" class="h-10" />
-                    </a>
-                </li>
-                <li class='p-2 rounded-md transition ease-in-out hover:bg-green-300 duration-300'>
-                    <a href="https://github.com/AndreasJilvero">
-                        <img src={github.src} alt="Github" class="h-10" />
-                    </a>
-                </li>
-                <li class='p-2 rounded-md transition ease-in-out hover:bg-green-300 duration-300'>
-                    <a href="https://www.linkedin.com/in/andreas-jilvero-51b8474a/">
-                        <img src={linkedin.src} alt="LinkedIn" class="h-10" />
-                    </a>
-                </li>
-            </ul>
+            {!anonymous && (
+                <>
+                    <footer class='mt-8 pt-8 grid justify-between grid-cols-1 md:grid-cols-2 gap-3 md:gap-0 border-t'>
+                        <div class=''>
+                            Andreas Jilvero AB<br />
+                        </div>
+                        <div class='md:text-right'>
+                            Organisationsnummer: 559237-3004<br />
+                            Phone number: 076 035 90 11
+                        </div>
+                    </footer>
+                    <ul class='ml-0 py-4 flex flex-row gap-x-8 justify-center bg-white'>
+                        <li class='p-2 rounded-md transition ease-in-out hover:bg-green-300 duration-300'>
+                            <a href="mailto:andreas.jilvero@gmail.com">
+                                <img src={mail.src} alt="Mail" class="h-10" />
+                            </a>
+                        </li>
+                        <li class='p-2 rounded-md transition ease-in-out hover:bg-green-300 duration-300'>
+                            <a href="https://github.com/AndreasJilvero">
+                                <img src={github.src} alt="Github" class="h-10" />
+                            </a>
+                        </li>
+                        <li class='p-2 rounded-md transition ease-in-out hover:bg-green-300 duration-300'>
+                            <a href="https://www.linkedin.com/in/andreas-jilvero-51b8474a/">
+                                <img src={linkedin.src} alt="LinkedIn" class="h-10" />
+                            </a>
+                        </li>
+                    </ul>
+                </>
+            )}
         </div>
 	</body>
 </html>
