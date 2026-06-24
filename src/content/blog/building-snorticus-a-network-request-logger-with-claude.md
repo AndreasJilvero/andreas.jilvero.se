@@ -1,5 +1,5 @@
 ---
-title: "I built a network request logger with Claude and named it Snorticus"
+title: "I didn't write a web request logger, Claude did — we named it Snorticus"
 date: 2026-06-23T00:00:00.000Z
 summary: "I wanted to manually verify that API responses look correct before and after a deploy. That simple need turned into a full-blown tool with a web UI, scheduled crawls, cross-session diffing, and a name that took longer to agree on than any actual feature."
 keywords: "playwright, node.js, sqlite, network requests, api logging, developer tools, claude ai, side project"
@@ -37,20 +37,6 @@ The reason I built this was to compare before/after. The UI has a cross-session 
 
 Since responses are often JSON, the diff is pretty readable. You can immediately see if a field disappeared, changed type, or started returning a different value.
 
-### Things that happened along the way
-
-A few things I didn't expect to have to deal with:
-
-**Cookie banners.** Every page navigation would trigger a GDPR cookie banner, which would then block all the clicks in the recording. Fixed by hooking into Playwright's `load` event and silently attempting to dismiss common cookie banner selectors after every navigation.
-
-**The IIFE problem.** Playwright's codegen outputs recordings as `(async () => { ... })()`. When you `await` that expression, you're just awaiting the promise that the IIFE *was called* — not the promise that the body *completed*. The fix was to strip the IIFE wrapper with a regex before running the script, so the body becomes a proper async function body that can actually be awaited.
-
-**URL pattern matching too eagerly.** My filter pattern matched my site's domain. Google Analytics sends beacons to `pagead2.googlesyndication.com?dl=https://www.mysite.com/...` — the site URL ends up in the query string, so the pattern matched the tracker too. Added an `exclude_pattern` field and a `[[filter.exclude_rule]]` block for finer-grained control.
-
-**Database size.** Response bodies are often large JSON blobs. With multiple sessions and hundreds of requests each, the DB grows fast. Added gzip compression on insert: response bodies are stored as compressed blobs using Node's built-in `zlib`, decompressed on read in the API layer. Typical compression ratio on JSON is 70–90%. The DB size is shown in the UI header.
-
-**Duplicate cron runs.** `node-cron` v4 changed how it manages tasks internally — tasks are keyed by UUID, not by name, and calling `task.stop()` pauses it but doesn't remove it from the registry. Every server restart was scheduling an additional cron task on top of the existing one. Fixed by iterating the task map and manually calling `getTasks().delete(id)` before registering a new one.
-
 ### The config file
 
 Each project has a `.toml` config file that lives alongside the recording and database:
@@ -87,12 +73,6 @@ What started as "record requests and show them in a table" grew a bit:
 - **Polling** — the UI checks for new sessions every 30 seconds so scheduled crawls appear automatically without a refresh.
 - **Per-project port** — set `port` in the config so you can run multiple projects simultaneously without passing `--port` every time.
 
-### What I'd add next
-
-- **Notifications** — send a Slack/webhook when a scheduled crawl finds a diff vs the previous session. The whole point is catching regressions; right now you still have to remember to open the UI.
-- **Auto-diff** — automatically compare the latest session against the previous one and highlight changed requests, without manually pinning A and B.
-- **Retention limits** — automatically delete sessions older than N days so the DB doesn't grow forever.
-
 ### The Claude part
 
 The entire thing was built in conversation with Claude. I'd describe what I wanted, it would implement it, I'd test it, report what broke, and we'd fix it. The session context eventually got long enough that it had to be summarised and continued — at which point Claude picked up exactly where we left off, which was a bit uncanny.
@@ -104,3 +84,20 @@ A few observations from that process:
 - The name negotiation went on longer than any actual feature discussion. This is fine.
 
 The project is on GitHub if you want to use it or poke around the code. It's self-hosted, no cloud, no subscription, just Node and a SQLite file.
+
+### Try it in 2 minutes
+
+```bash
+git clone https://github.com/AndreasJilvero/Snorticus.git
+cd Snorticus
+npm install
+npx playwright install chromium
+
+# Run the example crawl
+node cli.js crawl example/example.snorticus.toml
+
+# Open the UI
+node cli.js ui example/example.snorticus.toml
+```
+
+Then open **http://localhost:3131**. You'll see the captured requests from the example crawl. Run it again to get a second session and try the diff.
