@@ -31,6 +31,57 @@ There are two ways to use it:
 
 **Recording mode** — you open a browser with `npx playwright codegen`, click around a website like a normal human, and Playwright writes down every action. Snorticus then replays that recording in headless mode and captures all the traffic. This is the useful one — it captures requests that only happen after interactions like searches, filter clicks, or add-to-cart.
 
+### Try it in 5 minutes
+
+```bash
+git clone https://github.com/AndreasJilvero/Snorticus.git
+cd Snorticus
+npm install
+npx playwright install chromium
+```
+
+Create a project folder and a config file:
+
+```bash
+mkdir myproject
+```
+
+```toml
+# myproject/myproject.snorticus.toml
+[session]
+label = "My project"
+wait  = 2000
+
+[filter]
+pattern        = "example\\.com"
+resource_types = ["xhr", "fetch", "document"]
+
+[[page]]
+url = "https://example.com/"
+```
+
+Record yourself clicking around the site (a browser window opens — just use it normally, then close it):
+
+```bash
+npx playwright codegen --target=javascript -o myproject/myproject.js https://example.com/
+```
+
+Add the recording to your config:
+
+```toml
+[recording]
+file = "myproject.js"
+```
+
+Run it and open the UI:
+
+```bash
+node cli.js crawl myproject/myproject.snorticus.toml
+node cli.js ui myproject/myproject.snorticus.toml
+```
+
+Open **http://localhost:3131**. Run the crawl again after your next deploy and diff the two sessions.
+
 ### The part that actually solves the problem
 
 The reason I built this was to compare before/after. The UI has a cross-session diff feature: pin a request from session A, switch to session B, pin the equivalent request, click Diff. You get a side-by-side line diff of the response body (or headers, or request body). Green lines are new, red lines are gone.
@@ -85,19 +136,53 @@ A few observations from that process:
 
 The project is on GitHub if you want to use it or poke around the code. It's self-hosted, no cloud, no subscription, just Node and a SQLite file.
 
-### Try it in 2 minutes
+### Try it in 5 minutes
 
 ```bash
 git clone https://github.com/AndreasJilvero/Snorticus.git
 cd Snorticus
 npm install
 npx playwright install chromium
-
-# Run the example crawl
-node cli.js crawl example/example.snorticus.toml
-
-# Open the UI
-node cli.js ui example/example.snorticus.toml
 ```
 
-Then open **http://localhost:3131**. You'll see the captured requests from the example crawl. Run it again to get a second session and try the diff.
+Create a project folder and a config file:
+
+```bash
+mkdir myproject
+```
+
+```toml
+# myproject/myproject.snorticus.toml
+[session]
+label = "My project"
+wait  = 2000
+
+[filter]
+pattern        = "example\\.com"
+resource_types = ["xhr", "fetch", "document"]
+
+[[page]]
+url = "https://example.com/"
+```
+
+Record yourself clicking around the site (a browser window opens — just use it normally, then close it):
+
+```bash
+npx playwright codegen --target=javascript -o myproject/myproject.js https://example.com/
+```
+
+Add the recording to your config:
+
+```toml
+[recording]
+file = "myproject.js"
+```
+
+Run it and open the UI:
+
+```bash
+node cli.js crawl myproject/myproject.snorticus.toml
+node cli.js ui myproject/myproject.snorticus.toml
+```
+
+Open **http://localhost:3131**. Run the crawl again after your next deploy and diff the two sessions.
