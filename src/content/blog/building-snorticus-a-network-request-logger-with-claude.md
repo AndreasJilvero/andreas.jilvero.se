@@ -134,4 +134,4 @@ A few observations from that process:
 - When something broke mid-recording, the fix was often suggested before I finished describing the problem.
 - The name negotiation went on longer than any actual feature discussion. This is fine.
 
-The project is on GitHub if you want to use it or poke around the code. It's self-hosted, no cloud, no subscription, just Node and a SQLite file.
+The project is [on GitHub](https://github.com/AndreasJilvero/Snorticus) if you want to use it or poke around the code. It's self-hosted, no cloud, no subscription, just Node and a SQLite file.
